@@ -1,0 +1,63 @@
+---
+title: Understanding Stemcell Security 
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic provides a description of the security measures that Pivotal uses to harden the Windows stemcell.
+
+##<a id="group-policy-list"></a>Local Group Policy Settings
+
+The Windows stemcell contains a version of Windows Server 2012 R2 with a set of Local Group Policy settings optimized for security. These settings begin with the WS2012R2 Member Server Security Compliance v1.0 baseline, included in Microsoft Security Compliance Manager v4.0. For more information about this baseline, see the [Microsoft Security Guidance blog](https://blogs.technet.microsoft.com/secguide/2014/08/13/security-baselines-for-windows-8-1-windows-server-2012-r2-and-internet-explorer-11-final/). 
+
+Pivotal has collaborated with Microsoft to further harden the stemcell by implementing Local Security Policies settings, according to the recommended security baseline defined in Microsoft Security Compliance Manager. The table below lists these overrides.
+
+<p class="note"><strong>Note</strong>: Pivotal will continue to revise these settings as Microsoft releases updates.</p> 
+
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Setting</th>
+	</tr>
+	<tr>
+		<td>Turn off Automatic Download and Install of updates</td>
+		<td>Enabled</td>
+	</tr>
+	<tr>
+		<td>Allow Remote Shell Access</td>
+		<td>Disabled</td>
+	</tr>
+	<tr>
+		<td>Windows Firewall: Private: Display a notification</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>Windows Firewall: Domain: Display a notification</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>Windows Firewall: Public: Display a notification</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>Network access: Do not allow storage of passwords and credentials for network auth</td>
+		<td>Enabled</td>
+	</tr>
+	<tr>
+		<td>Access this computer from the network</td>
+		<td>Administrators</td>
+	</tr>
+	<tr>
+		<td>Deny log on as a batch job</td>
+		<td>Guests</td>
+	</tr>
+	<tr>
+		<td>Deny log on as a service</td>
+		<td>Guests</td>
+	</tr>
+	<tr>
+		<td>Deny log on through Remote Desktop Services</td>
+		<td>Guests</td>
+	</tr>
+</table>

@@ -1,0 +1,54 @@
+---
+title: Understanding Windows Cells 
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic provides a description of how Windows cells work in Pivotal Cloud Foundry (PCF). For more information about security, see the [Understanding Stemcell Security](windows-security.html) topic.
+
+##<a id='overview'></a> Overview
+
+App instances in PCF run inside containers. [Garden](../concepts/architecture/garden.html) is the API that creates and manages these containers, and Garden Windows implements Garden on Windows.
+
+By deploying the [PAS for Windows 2012R2](deploy-windows.html) tile, operators create a Windows [cell](../concepts/architecture/index.html#diego-cell) from a [stemcell](https://bosh.io/docs/stemcell.html) that contains the Windows Server 2012 operating system. Because Windows does not natively support Linux-style containers, Garden Windows uses an open-source library called IronFrame to implement containerization on Windows. IronFrame uses features of the Windows kernel to isolate resources that would otherwise be shared, creating containers comparable to those that exist on Linux.
+
+A Windows cell includes the following components:
+
+* Garden Windows: Implements the [Garden](../concepts/architecture/garden.html) API on Windows
+* Containerizer: Creates and manages Windows containers, using the IronFrame library
+* [Metron Agent](../concepts/diego/diego-architecture.html#metron-agent): Forwards app logs, errors, and metrics to the [Loggregator](../loggregator/architecture.html) system
+* [BOSH Agent](https://bosh.io/docs/bosh-components.html#agent): Executes instructions from the BOSH Director
+* [Consul Client](../concepts/diego/diego-architecture.html#consul): Registers the cell as a service in a Consul cluster
+* [Cell Rep](../concepts/diego/diego-architecture.html#rep): Runs and manages [Tasks and Long Running Processes](../concepts/diego/diego-auction.html#processes)
+
+The following diagram illustrates the architecture of a Windows cell:
+
+<%= image_tag('windows-cell.png') %>
+
+Garden Windows achieves container isolation in the following ways:
+
+* [Filesystem Isolation](#filesystem)
+* [Disk Usage](#disk-usage)
+* [Network Isolation](#network-isolation)
+* [Memory Usage](#memory-usage)
+
+##<a id='filesystem'></a> Filesystem Isolation
+
+Garden Windows creates a unique temporary user for each container, and uses [Access Control Lists](https://msdn.microsoft.com/en-us/library/windows/desktop/aa374872(v=vs.85).aspx) (ACLs) to render a "containerized" directory visible only to the user who owns the container. The temporary user can also read much of the host cell's filesystem, such as system DLLs and `C:\Program Files`. 
+
+<p class="note"><strong>Note</strong>: Because the temporary user who owns the container can view much of the host filesystem, operators should avoid placing sensitive or confidential information in system directories that would be accessible by standard users on a Windows workstation.</p> 
+
+##<a id='disk-usage'></a> Disk Usage
+
+Garden Windows enforces disk usage limits with NTFS [disk quotas](https://technet.microsoft.com/en-us/library/cc938945.aspx#XSLTsection128121120120), which work on a per-user, per-volume basis. The disk quotas apply to the temporary user who owns the container, on the volume that contains the containerized directory, which is `C:\` by default. Because quotas are transparent to the user, the temporary user who owns the container can only see the disk resources available within the assigned quota.
+
+##<a id='network-isolation'></a> Network Isolation
+
+Apps launched inside a Garden Windows container bind directly to the external IP address of the cell. For apps that utilize the port mapping functions of the Garden API, Garden Windows maps internal container ports to external ports. 
+
+##<a id='memory-usage'></a> Memory Usage
+
+Garden Windows uses [job objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms684161.aspx) to enforce limits on memory usage by an app inside a container. A job object is a Windows kernel object that enables the control of multiple processes as a single group. Garden Windows assigns the processes inside a container to a job object and sets an upper limit on memory utilization by this job object, which is enforced by the kernel. 
+
+Additionally, an IronFrame component called the Guard helps enforce memory limits. The Guard polls for app memory usage and ensures that no app has mapped more memory than allowed. If an app exceeds its memory limit, the Guard kills the job object. If a process attempts to escape a job object, the Guard stops this behavior and kills the process if necessary.

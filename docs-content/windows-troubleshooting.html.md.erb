@@ -1,0 +1,180 @@
+---
+title: Troubleshooting Windows Cells 
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how to troubleshoot Windows cells deployed by Pivotal Application Service (PAS) for Windows 2012R2.
+
+##<a id='logs'></a> Retrieve Logs
+
+Perform the following steps to retrieve the logs for the Windows cell:
+
+1. Navigate to the Ops Manager Installation Dashboard.
+1. Click the **PAS for Windows 2012R2** tile.
+1. Click the **Status** tab.
+1. Under the **Logs** column, click the download icon for the Windows cell you want to retrieve logs from.
+1. Click the **Logs** tab.
+1. When the logs are ready, click the filename to download them.
+1. Unzip the file to examine the contents. Each component on the cell has its own logs directory:
+	* `/consul_agent_windows/`
+	* `/garden-windows/`
+	* `/metron_agent_windows/`
+	* `/rep_windows/`
+
+Hakim is a diagnostic tool that reveals common configuration issues with Windows cells. Because PAS for Windows 2012R2 runs Hakim as a BOSH job, the logs may include Hakim error messages. Refer to the [section](#hakim-error) below for a list of Hakim error messages and their possible solutions.
+
+###<a id='hakim-error'></a> Hakim Error Messages
+
+**Processes**
+
+`The following processes are not running`
+
+This usually indicates a failed deployment. Try [redeploying](deploy-windows.html) the PAS for Windows 2012R2 tile.
+
+<hr>
+
+**NTP**
+
+`There was an error detecting ntp synchronization on your machine.
+An accurate system clock is essential for internal Cloud Foundry metric reports.
+Please configure your NTP settings, if not already done.
+We recommend that your firewall have outbound rules set for UDP on port 123.
+In addition, ensure that your 'DnsCache' service is running`
+
+If NTP is not configured, clock skew with other PCF components can occur. Clock skew can result in odd errors, such as not receiving any metrics from apps running on the affected machine. Ensure that you are using the same NTP server on your Windows cell as the rest of your PCF deployment.
+
+<hr>
+
+**Firewall** 
+
+`Windows firewall service is not enabled. The Windows firewall is required in order to enforce Application Security Group rules. Running without the firewall is possible, but strongly not recommended.`
+
+ Garden Windows enforces PCF security group settings for apps running on the Windows cell through the Windows firewall. Apps can run without this, but security groups do not work correctly and apps have unrestricted network access. 
+
+ To resolve this error, enable the Windows firewall. Perform the following steps in your RDP session to access the Windows firewall configuration:
+
+ 1. Open the Server Manager from the task bar.
+ 1. Click **Tools** in the upper right and select **Windows Firewall with Advanced Security**.
+ 1. Configure and enable the Windows firewall.
+
+ <hr>
+
+**Fair Share**
+
+`Fair Share CPU Scheduling must be disabled`
+
+You must disable Fair Share CPU scheduling for your Windows cell to function properly. Perform the following steps in your RDP session:
+
+1. Open the Registry Editor at `C:\Windows\regedit.exe`. 
+1. Navigate to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Quota System\`.
+1. Double-click the `EnableCpuQuota` value.
+1. Change the **Value data** from `1` to `0`.
+1. Click **OK**.
+
+<hr>
+
+**Container**
+
+`Failed to create container`
+
+This usually indicates an issue with the Windows containerization service. Contact [Pivotal Support](https://support.pivotal.io/) and provide the full output of this error.
+
+<hr>
+
+**Consul**
+
+`Failed to resolve consul host`
+
+This usually indicates interference with DNS resolution on your Windows cell. To resolve this error, perform the following steps in your RDP session to set `127.0.0.1` as the primary DNS server for the active network adapter:
+
+1. Open the Control Panel.
+1. Click **Network and Internet**
+1. Click **Network and Sharing Center**.
+1. Click **Change adapter settings** on the left.
+1. Double-click your active network adapter.
+1. Click **Properties**.
+1. Select **Internet Protocol Version 4 (TCP/IPv4)**.
+1. Click **Properties**.
+1. Ensure that **Use the following DNS server addresses** is selected and enter `127.0.0.1` for **Preferred DNS server**.
+1. Click **OK**. 
+
+
+
+
+
+##<a id='rdp'></a> Connect to the Windows Cell
+
+Perform the following steps to connect to your Windows cell to run diagnostics:
+
+1. Download and install a Remote Desktop Protocol (RDP) client.
+	* For Mac OS X, download the Microsoft Remote Desktop app from the [Mac App Store](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12).
+	* For Windows, download the Microsoft Remote Desktop app from [Microsoft](https://www.microsoft.com/en-us/store/p/microsoft-remote-desktop/9wzdncrfj3ps).
+	* For Linux/UNIX, download a RDP client like [rdesktop](http://www.rdesktop.org/).
+
+1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the <em>Advanced Troubleshooting with the BOSH CLI</em> topic to log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
+
+1. Retrieve the IP address of your Windows cell using the BOSH CLI. Run the following command, replacing `MY-ENV` with the alias you assigned to your BOSH Director:
+    <pre class="terminal">
+    $ bosh -e MY-ENV -d garden-windows
+    Using environment 'DIRECTOR-IP' as client 'admin'
+
+    Name               Release(s)       Stemcell(s)    Team(s)  Cloud Config
+    garden-windows     ...              ...            -        latest
+    </pre>
+
+1. Retrieve the Administrator password for your Windows cell by following the steps for your IaaS:
+	* On vSphere, this is the value of `WINDOWS_PASSWORD` in the `consumer-vars.yml` file you used to previously build a stemcell.
+	* On Amazon Web Services (AWS), navigate to the AWS EC2 console. Right-click on your Windows cell and select **Get Windows Password** from the drop-down menu. Provide the local path to the `ops_mgr.pem` private key file you used when installing Ops Manager and click **Decrypt password** to obtain the Administrator password for your Windows cell.
+	* On Google Cloud Platform (GCP), navigate to the Compute Engine Dashboard. Under **VM Instances**, select the instance of the Windows VM. At the top of the page, click on **Create or reset Windows password**. When prompted, enter "Administrator" under **Username** and click **Set**. You will receive a one-time password for the Windows cell.
+	* You cannot RDP into Windows cells on Azure.
+
+1. Open your RDP client. The examples below use the Microsoft Remote Desktop app.
+
+1. Click **New** and enter your connection information:
+	<%= image_tag('rdp-connect.png') %>
+	* **Connection name**: Enter a name for this connection.
+	* **PC name**: Enter the IP address of your Windows cell.
+	* **User name**: Enter `Administrator`.
+	* **Password**: Enter the password of your Windows cell that you obtained above.
+
+1. To mount a directory on your local machine as a drive in the Windows cell, perform the following steps:
+	1. From the same **Edit Remote Desktops** window as above, click **Redirection**.
+	1. Click the plus icon at the bottom left. 
+	<%= image_tag('rdp-redirection.png') %>
+	1. For **Name**, enter the name of the drive as it will appear in the Windows cell. For **Path**, enter the path of the local directory. 
+	1. Click **OK**.
+
+1. Close the **Edit Remote Desktops** window and double-click the newly added connection under **My Desktops** to open a RDP connection to the Windows cell.
+
+1. In the RDP session, you can use the [Consul CLI](#consul) to diagnose problems with your Windows cell.
+
+###<a id='consul'></a> Consul CLI
+
+Perform the following steps to use the Consul CLI on your Windows cell to diagnose problems with your Consul cluster:
+
+1. In your RDP session, open a PowerShell window.
+1. Change into the directory that contains the Consul CLI binary:
+	<pre class="terminal">
+	PS C:\Users\Administrator> cd C:\var\vcap\packages\consul-windows\bin\ 
+	</pre>
+1. Use the Consul CLI to list the members of your Consul cluster:
+	<pre class="terminal">
+	PS C:\Users\Administrator\var\vcap\packages\consul-windows\bin\> .\consul.exe members
+	Node                       Address          Status  Type    Build  Protocol  DC
+	cell-windows-0             10.0.0.111:8301  alive   client  0.6.4  2         dc1
+	cloud-controller-0         10.0.0.94:8301   alive   client  0.6.4  2         dc1
+	cloud-controller-worker-0  10.0.0.99:8301   alive   client  0.6.4  2         dc1
+	consul-server-0            10.0.0.96:8301   alive   server  0.6.4  2         dc1
+	diego-brain-0              10.0.0.109:8301  alive   client  0.6.4  2         dc1
+	diego-cell-0               10.0.0.103:8301  alive   client  0.6.4  2         dc1
+	diego-cell-1               10.0.0.104:8301  alive   client  0.6.4  2         dc1
+	diego-cell-2               10.0.0.107:8301  alive   client  0.6.4  2         dc1
+	diego-database-0           10.0.0.92:8301   alive   client  0.6.4  2         dc1
+	ha-proxy-0                 10.0.0.254:8301  alive   client  0.6.4  2         dc1
+	nfs-server-0               10.0.0.100:8301  alive   client  0.6.4  2         dc1
+	router-0                   10.0.0.105:8301  alive   client  0.6.4  2         dc1
+	uaa-0                      10.0.0.93:8301   alive   client  0.6.4  2         dc1
+	</pre>
+1. Examine the output to ensure that the `cell-windows-0` service is registered in the Consul cluster and is `alive`. Otherwise, your Windows cell cannot communicate with your PCF deployment and developers cannot push .NET apps to the Windows cell. Check the configuration of your Consul cluster, and ensure that your certificates are not missing or misconfigured.

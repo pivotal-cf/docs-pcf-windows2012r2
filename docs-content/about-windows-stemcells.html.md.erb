@@ -1,0 +1,28 @@
+---
+title: About Windows Stemcells
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+## <a id="overview"></a> Overview
+
+A "stemcell" is a customized operating system image containing the filesystem for BOSH-managed virtual machines. When deployed, it includes a process, the _BOSH Agent_, which is pre-configured to communicate with the orchestrating VM, the _BOSH Director_.
+The BOSH Agent is responsible for executing and monitoring "jobs" on the VM.
+
+Deployments of Windows Server on PCF currently use a stemcell containing Windows Server 2012R2.
+
+## <a id="light-stemcells"></a> Light Stemcells
+
+"Light" stemcells are metadata files used on a public IaaS that enable users to reference and deploy a stemcell without uploading it manually.
+
+Below is the documentation currently available for activating light stemcells for the PAS for Windows 2012R2 tile:
+
++ <a href="../windows/azure-light-stemcell.html" class="subnav"> Deploying on Azure</a>
+
+## <a id="stemcell-builds"></a> Stemcell Builds
+
+Below is the documentation currently available for building stemcells for the PAS for Windows 2012R2 tile:
+
++ <a href="../windows/vsphere-stemcell-build.html" class="subnav"> vSphere Stemcell Build</a>
+

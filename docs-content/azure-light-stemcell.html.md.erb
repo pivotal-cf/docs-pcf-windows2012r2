@@ -1,0 +1,37 @@
+---
+title: Deploying on Azure
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic discusses the Azure Light Stemcell. "Light" stemcells are metadata files used on a public IaaS that enable users to reference and deploy a stemcell without uploading it manually. The actual stemcell lives on the cloud storage service of the IaaS and the BOSH Director instantiates the VMs.
+
+## <a id="req"></a> Requirements
+
+1. In the **OpsManager Installation Dashboard**, select **PAS for Windows 2012R2**. 
+1. In the **Settings** tab, select **Resource Config**. 
+1. Within the **VM Type** field, ensure that your **Windows Diego Cell** has a disk size of 128&nbsp;GB or larger. 
+1. Ensure that the **Install HWC Buildpack Errand** has a VM disk size of 128&nbsp;GB or larger.
+1. Navigate to the **Ops Manager Director** of your chosen IaaS. 
+1. Within the **VM Type** field, ensure the Ops Man compilation VM has an ephemeral disk of 128&nbsp;GB or larger.
+
+## <a id="download"></a> Download the Azure Light Stemcell
+
+To Download the Azure Light Stemcell, select **Azure Light Stemcell for Windows2012R2** from the **Release Download Files** section of the <a href="https://network.pivotal.io/products/stemcells-windows-server">Stemcells for PCF (Windows)</a> page.
+
+## <a id="use"></a> Use the Azure Light Stemcell
+
+To use the Azure light stemcell, you must first accept the corresponding license agreement and enable it for your non-trial Azure subscription through the Azure marketplace. 
+
+1. Navigate to [https://portal.azure.com](https://portal.azure.com) and log in.
+1. From the options on the left side of the page, click **+ New**.
+1. In the **Search the Marketplace** field, search for **BOSH Azure Windows Stemcell**.
+1. Select **BOSH Azure Windows Stemcell** from your search results.
+1. A description of the BOSH Azure Windows Stemcell appears. Beneath the description, at the bottom of the page, click the blue banner that reads **Want to deploy programmatically? Get started ➔**.
+1. Review the **Offer details** and **Terms of use**.
+1. Under **Choose the subscriptions**, click **Enable** for each Azure subscription you want to use.
+1. Click **Save**.
+
+
+
