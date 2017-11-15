@@ -45,7 +45,23 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 
     <p class="note"><strong>Note</strong>: This feature is beta and not considered production-ready.</p>
 
-1. (Optional) If you want your PCF Runtime for Windows application workloads to be deployed to an isolation segment, perform the steps in [Assign a Tile to an Isolation Segment](#assign-isolation) below.
+1. (Optional) If you want to configure a Key Management Service (KMS) that your volume-licensed Windows cell can register with, perform the following steps:
+    1. Click **Enable**
+    2. For the **Host** field, enter the KMS hostname.
+    3. For the **Port** field, enter the port number. The default port number is 1688.
+
+    ![The enable KMS text fields: host and port](enable-kms.png)
+
+1. (Optional) If you want your PAS for Windows 2012R2 application workloads to be deployed to an isolation segment, perform the following steps:
+
+    1. Click **Application Containers**.
+
+        <%= image_tag('app_containers_segment_name.png') %>
+    1. Under **Segment Name**, enter a name for your isolation segment. Ensure that this name is unique across your PCF deployment.
+
+    1. Click **Save**.
+    
+    1. Perform the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to create the isolation segment in the Cloud Controller Database (CCDB).
 
 1. Click **Errands**. Pivotal recommends that you set the **Install HWC Buildpack Errand** to **On**. This ensures that you receive the most up-to-date HWC Buildpack.
 	

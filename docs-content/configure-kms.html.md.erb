@@ -7,40 +7,15 @@ owner: Greenhouse
 
 This topic describes how to configure a KMS host that your volume-licensed Windows cell can register with.
 
-To configure a KMS host, you edit the [runtime config](https://bosh.io/docs/runtime-config.html) for your BOSH Director to include the [Windows Utilities Release](https://github.com/cloudfoundry-incubator/windows-utilities-release), which provides BOSH jobs intended to be used as [addons](https://bosh.io/docs/runtime-config.html#addons).
-
 ##<a id='configure'></a> Configure a KMS Host
 
-1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the <em>Advanced Troubleshooting with the BOSH CLI</em> topic to target and log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
+1. Navigate to the **PAS for Windows 2012R2** tile in Ops Manager
 
-1. Use the BOSH CLI v2 to show your current runtime config by running `bosh -e YOUR-ENV runtime-config`. For example:
-	<pre class="terminal">$ bosh -e gcp runtime-config</pre>
-1. Copy the contents of your existing runtime config into a new YAML file.
-1. Include the Windows Utilities Release in your new runtime config:
+1. Select the **VM Options** configuration pane.
 
-			---
-			releases:
-			...
-			- name: windows-utilities
-			  version: 0.3.0
+1. Under **Key Management Service**, perform the following steps:
+    1. Click **Enable**
+    2. For the **Host** field, enter the KMS hostname.
+    3. For the **Port** field, enter the port number. The default port number is 1688.
 
-1. Include the KMS configuration in your new runtime config:
-
-			addons:
-			- name: kms-addon
-			  jobs:
-			  - name: set_kms_host
-			    release: windows-utilities
-			    properties:
-			      set_kms_host:
-			        host: some-kms-host.privatedomainname
-			        port: 12345 # defaults to 1688
-			  include:
-			    stemcell:
-			    - os: windows2012R2
-
-1. Update the BOSH Director with your new runtime config. For example:
-	<pre class="terminal">
-	$ bosh -e gcp update-runtime-config config.yml
-	</pre>
-1. Redeploy the PCF Runtime for Windows tile by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**.
+    ![The enable KMS text fields: host and port](enable-kms.png)
