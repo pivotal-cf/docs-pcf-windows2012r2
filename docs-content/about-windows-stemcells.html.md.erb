@@ -12,6 +12,37 @@ The BOSH Agent is responsible for executing and monitoring "jobs" on the VM.
 
 Deployments of Windows Server on PCF currently use a stemcell containing Windows Server 2012R2.
 
+## <a id="sizing"></a> Root Disk Sizing
+
+The size of your stemcell's root disk determines the root disk size of any VM that the stemcell can create. The relationship between a stemcell's disk size and the root disk size of the Windows cells that it creates depends on your IaaS, as shown in the table below.
+
+<table id='disk-sizes' border="1" class="nice" >
+  <tr>
+    <th>IaaS</th>
+    <th>Stemcell root disk size</th>
+    <th>Possible root disk sizes for Windows cells</th>
+  </tr><tr>
+    <th>AWS</th>
+    <td>30GB</td>
+    <td>30GB or larger (for stemcell 1200.9 and later)</td>
+  </tr><tr>
+    <th>Azure</th>
+    <td>127GB</td>
+    <td>127GB</td>
+  </tr><tr>
+    <th>GCP</th>
+    <td>50GB</td>
+    <td>50GB or larger</td>
+  </tr><tr>
+    <th>vSphere</th>
+    <td>Recommended 128GB+<sup>*</sup></td>
+    <td>Same as stemcell minimum root disk size</td>
+    <td></td>
+  </tr>
+</table>
+
+<sup>*</sup>Because you [create your own stemcell](./vsphere-stemcell-build.html) on vSphere, you can control its root disk size.
+
 ## <a id="light-stemcells"></a> Light Stemcells
 
 "Light" stemcells are metadata files used on a public IaaS that enable users to reference and deploy a stemcell without uploading it manually.

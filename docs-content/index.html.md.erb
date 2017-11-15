@@ -57,3 +57,18 @@ The minimum resource requirement for each Windows cell:
 The PAS tile handles all of the credentials for PAS for Windows 2012R2.
 
 To rotate your credentials in PAS for Windows 2012R2, re-deploy PAS and PAS for Windows 2012R2 by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**.
+
+## <a id='issues'></a>Known Issues
+
+PCF Runtime for Windows has the following known issues:
+
+* Windows cells can host a maximum of 40 app instances.
+
+* In the PCF Runtime for Windows tile **Credentials** tab, for either **Windows Diego Cell** or **Install HWS Buildpack Errand**, the `vcap` credentials that appear when you click **VM Credentials** > **Link to Credential** are meaningless. Windows cells have no vcap user.
+
+* Under **VM Options** > **Manage Administrator Password** > **Set the password**, setting the admin user password has the following limitations:
+
+  - Azure and GCP: setting the password does not work. You can only **Use random administrator password**.
+
+  - AWS and vSphere: the password must be 8-14 characters; and must use letters, numbers and the `!` character, which is the only allowed special character.
+
