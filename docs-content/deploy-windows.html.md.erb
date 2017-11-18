@@ -54,16 +54,7 @@ There are two settings in the PAS tile that affect the Windows cells installed b
 
     ![The enable KMS text fields: host and port](enable-kms.png)
 
-1. (Optional) If you want your PAS for Windows 2012R2 application workloads to be deployed to an isolation segment, perform the following steps:
-
-    1. Click **Application Containers**.
-
-        <%= image_tag('app_containers_segment_name.png') %>
-    1. Under **Segment Name**, enter a name for your isolation segment. Ensure that this name is unique across your PCF deployment.
-
-    1. Click **Save**.
-    
-    1. Perform the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to create the isolation segment in the Cloud Controller Database (CCDB).
+1. (Optional) If you want your PAS for Windows 2012R2 application workloads to be deployed to an isolation segment, perform the steps in [Assign a Tile to an Isolation Segment](#assign-isolation) below.
 
 1. Click **Errands**. Pivotal recommends that you set the **Install HWC Buildpack Errand** to **On**. This ensures that you receive the most up-to-date HWC Buildpack.
 	
@@ -87,9 +78,27 @@ There are two settings in the PAS tile that affect the Windows cells installed b
 
 After you have deployed the PAS for Windows 2012R2 tile, developers can then push .NET applications to Windows cells. For more information, see the [Deploying .NET Apps to Windows Cells](push-windows-apps.html) topic.
 
-##<a id='copy'></a> Step 4: (Optional) Copy the Tile
+##<a id='copy'></a> Step 4: (Optional) Create More Tiles
 
-If you want to create multiple isolation segments for the Windows tile, perform the following steps to copy the **PAS for Windows 2012R2** tile with the Replicator tool:
+If you want to run Windows cells in multiple isolation segments, you must create and configure additional PAS for Windows 2012R2 tiles. See [Windows Cells in Isolation Segments](#isolation) below for how to do this.
+
+##<a id='isolation'></a> Windows Cells in Isolation Segments
+
+Isolation segments are compartmentalized resource pools for Diego cells. The cells in one isolation segment share routing, computing, and logging resources with other cells in the same segment, and don't use resources from other isolation segments.
+
+To run Windows cells in multiple isolation segments, you need to create and install multiple PAS for Windows 2012R2 tiles and configure each to run in a different isolation segment.
+
+If the isolation segments do not already exist in the Cloud Controller database, you need to create them there.
+
+See [Replicate a Tile](#replicate) for how to create multiple copies of the PAS for Windows 2012R2 tile.
+
+See [Assign a Tile to an Isolation Segment](#assign-isolation) for how to associate a PAS for Windows 2012R2 tile with an isolation segment, so that its cells run in that segment. 
+
+See the the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic for how to add an isolation segment to the Cloud Controller Database (CCDB).
+
+###<a id='replicate'></a> Replicate a Tile
+
+To make multiple copies of the **PAS for Windows 2012R2** tile that you can assign to different isolation segments, use the Replicator tool as follows:
 
 1. Download the Replicator tool from the **Pivotal Cloud Foundry Runtime for Windows** section of [Pivotal Network](https://network.pivotal.io/products/p-windows-runtime).
 
@@ -108,6 +117,17 @@ If you want to create multiple isolation segments for the Windows tile, perform 
     * `/PATH/TO/ORIGINAL`: Provide the absolute path to the original PAS for Windows 2012R2 tile you downloaded from Pivotal Network.
     * `/PATH/TO/COPY`: Provide the absolute path for the copy of the PAS for Windows 2012R2 tile that the Replicator tool produces.
 
-1. Follow the procedures in this topic using the new `.pivotal` file, starting with [Step 1](#ert).
+1. Install and configure the Windows isolation segment, using the new `.pivotal` file and following the procedures in this topic, starting with the **Import a Product** step of [Step 2: Install the Tile](#install).
 
+###<a id='assign-isolation'></a> Assign a Tile to an Isolation Segment
 
+To assign a PAS for Windows 2012R2 tile to an isolation segment, perform the following steps:
+
+1. Open the **Application Containers** pane.
+
+    <%= image_tag('app_containers_segment_name.png') %>
+1. Under **Segment Name**, enter the name for the isolation segment to associate the tile with. If you are creating a new isolation segment, ensure that this name is unique across your PCF deployment.
+
+1. Click **Save**.
+
+1. If you are creating a new isolation segment, follow the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to add the isolation segment to the Cloud Controller Database (CCDB).
