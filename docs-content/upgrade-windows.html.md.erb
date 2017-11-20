@@ -5,9 +5,16 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to upgrade the Pivotal Application Service (PAS) for Windows 2012R2 tile and update the Windows stemcell.
+This topic describes how to upgrade and rotate the credentials for PCF Runtime for Windows tile, update the Windows stemcell, and upgrade your Windows apps.
 
-##<a id='upgrade-tile'></a> Upgrade PAS for Windows 2012R2
+
+##<a id='when'></a> When to Upgrade
+
+You must upgrade the PCF Runtime for Windows tile at the same time or immediately after you upgrade the Elastic Runtime tile.
+
+Unless otherwise noted, any minor version of PCF Runtime for Windows is compatible with the same minor version of Elastic Runtime. For example, any 1.12.* version of PCF Runtime for Windows works with any 1.12.* version of Elastic Runtime.
+
+##<a id='upgrade-tile'></a> Upgrade PCF Runtime for Windows
 
 The latest versions of your existing products appear in the **Ops Manager Installation Dashboard**. Upgrade your product to the latest version by following these instructions.
 
@@ -17,9 +24,15 @@ The latest versions of your existing products appear in the **Ops Manager Instal
 
 1. When the download completes, click **Apply Changes**.
 
-1. If necessary, configure the product. For more information about configuring PAS for Windows 2012R2, see the [Deploying PAS for Windows 2012R2](./deploy-windows.html) topic.
+1. If necessary, configure the product. For more information about configuring PCF Runtime for Windows, see the [Deploying PCF Runtime for Windows](./deploy-windows.html) topic.
 
 1. Locate the **Pending Changes** section on the right-hand side of the screen and click **Apply Changes**.
+
+## <a id='rotate'></a>Rotate PCF Runtime for Windows Credentials
+
+The Elastic Runtime tile handles all of the credentials for PCF Runtime for Windows.
+
+To rotate your credentials in PCF Runtime for Windows, re-deploy Elastic Runtime and PCF Runtime for Windows by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**.
 
 ##<a id='upgrade-stemcell'></a> Upgrade the Windows Stemcell
 
@@ -29,7 +42,7 @@ The latest versions of your existing products appear in the **Ops Manager Instal
     * For vSphere, you must [build your own stemcell](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/blob/master/create-manual-vsphere-stemcells.md).
     * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows Server)** section of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
 
-1. Click the **PAS for Windows 2012R2** tile.
+1. Click the **PCF Runtime for Windows** tile.
 
 1. Within the **Settings** tab, click **Stemcell** on the left-hand navigation.
 
