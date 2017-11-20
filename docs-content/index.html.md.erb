@@ -1,21 +1,21 @@
 ---
-title: Using PCF Runtime for Windows
+title: Using PAS for Windows 2012R2
 owner: Diego
 ---
 
 <strong><%= modified_date %></strong>
 
-This documentation describes how operators install and manage Windows [Diego cells](../concepts/architecture/index.html#diego-cell) in Pivotal Cloud Foundry (PCF) with PCF Runtime for Windows and how developers push .NET Framework applications to Windows cells.
+This documentation describes how operators install and manage Windows [Diego cells](../concepts/architecture/index.html#diego-cell) in Pivotal Cloud Foundry (PCF) with PAS for Windows 2012R2 and how developers push .NET Framework applications to Windows cells.
 
-Operators can install PCF Runtime for Windows on Microsoft Azure, VMware vSphere, Amazon Web Services (AWS), or Google Cloud Platform (GCP).
+Operators can install PAS for Windows 2012R2 on Microsoft Azure, VMware vSphere, Amazon Web Services (AWS), or Google Cloud Platform (GCP).
 
 ## <a id='overview'></a>Overview
 
-Operators who want to enable developers to push .NET Framework applications can deploy Windows-based Diego cells in PCF via the PCF Runtime for Windows tile.
+Operators who want to enable developers to push .NET Framework applications can deploy Windows-based Diego cells in PCF via the PAS for Windows 2012R2 tile.
 
 Deploying this tile creates a separate BOSH deployment populated with the Garden-Windows BOSH release, which runs on a Windows cell built from a Windows Server 2012R2 stemcell. This lets PCF deploy Windows-based Diego cells in addition to Linux-based Diego cells.
 
-Once the Windows cell is running and after developers build their applications, they can then specify the `windows2012R2` stack when pushing .NET Framework apps from the command line or PowerShell session. Using the Diego infrastructure, PCF passes the app to the Windows cell in the Runtime for Windows deployment. The diagram below illustrates the process.
+Once the Windows cell is running and after developers build their applications, they can then specify the `windows2012R2` stack when pushing .NET Framework apps from the command line or PowerShell session. Using the Diego infrastructure, PCF passes the app to the Windows cell in the PAS for Windows 2012R2 deployment. The diagram below illustrates the process.
 
 <%= image_tag('windows-overview.png') %>
 
@@ -27,12 +27,12 @@ When configuring the Windows deployment, the minimum resource requirements for e
 - Memory: 16&nbsp;GB
 - Number of CPUs: 4
 
-By design, Runtime for Windows only supports deployments based on Windows Server 2012R2.
+By design, PAS for Windows 2012R2 only supports deployments based on Windows Server 2012R2.
 
 Due to Microsoft's licensing requirements, operators must either bring their own licensed copies of Windows Server (for on-premise deployments) or pay the surcharges associated with Windows Server licensing determined by the IaaS provider on Azure, AWS, and GCP.
 
 
-## <a id='understand'></a>Understanding PCF Runtime for Windows ##
+## <a id='understand'></a>Understanding PAS for Windows 2012R2 ##
 
 * <a href="understand-windows.html" class="subnav">Understanding Windows Cells</a>
 
@@ -41,9 +41,9 @@ Due to Microsoft's licensing requirements, operators must either bring their own
 * <a href="about-windows-stemcells.html" class="subnav">About Windows Stemcells</a>
 
 
-## <a id='install'></a>Installing PCF Runtime for Windows ##
+## <a id='install'></a>Installing PAS for Windows 2012R2 ##
 
-* <a href="./deploy-windows.html" class="subnav">Deploying PCF Runtime for Windows</a>
+* <a href="./deploy-windows.html" class="subnav">Deploying PAS for Windows 2012R2</a>
 
 
 ## <a id="managing"></a>Managing Windows Cells
@@ -62,18 +62,18 @@ Due to Microsoft's licensing requirements, operators must either bring their own
 
 ## <a id='limitations'></a>Limitations
 
-Deployments of Windows Diego Cells via PCF Runtime for Windows have the following limitations:
+Deployments of Windows Diego Cells via PAS for Windows 2012R2 have the following limitations:
 
-* Because of the process management characteristics of Windows Server 2012R2, Windows cells can host a maximum of 40 app instances per cell. Operators should take this density constraint into account when planning the sizes of their Runtime for Windows deployments, in addition to CPU, disk, and memory needs.
+* Because of the process management characteristics of Windows Server 2012R2, Windows cells can host a maximum of 40 app instances per cell. Operators should take this density constraint into account when planning the sizes of their PAS for Windows 2012R2 deployments, in addition to CPU, disk, and memory needs.
 
-* The following Cloud Foundry features are not supported by Runtime for Windows:
+* The following Cloud Foundry features are not supported by PAS for Windows 2012R2:
 
   - Diego SSH (i.e. the `cf ssh` command). This is due to limitations of the inherent file system isolation characteristics of Windows Server 2012R2.
   - Volume services. For mounting SMB shares, developers should access SMB volumes from their applications directly.
   - Container-to-container networking. The IronFrame library that provides container-like features on Windows Server 2012R2 does not support container networking. IronFrame binds virtual container ports to the host.
 
 
-* The following Windows technologies are not supported by Runtime for Windows:
+* The following Windows technologies are not supported by PAS for Windows 2012R2:
 
   - Active Directory Domain Services. i.e. joining Windows cells to an Active Directory domain.
   - Integrated Windows Authentication. Instead, operators should deploy Active Directory Federation Services and the Pivotal SSO tile to enable OAuth-based authentication.
@@ -85,9 +85,9 @@ These limitations will be addressed in subsequent versions of the product.
 
 ## <a id='issues'></a>Known Issues
 
-PCF Runtime for Windows has the following known issues:
+PAS for Windows 2012R2 has the following known issues:
 
-* In the PCF Runtime for Windows tile **Credentials** tab, the `vcap` credentials that appear when you click **VM Credentials** > **Link to Credential** do not apply to Windows cells, since they do not yet have a vcap user.
+* In the PAS for Windows 2012R2 tile **Credentials** tab, the `vcap` credentials that appear when you click **VM Credentials** > **Link to Credential** do not apply to Windows cells, since they do not yet have a vcap user.
 
 * Under **VM Options** > **Manage Administrator Password** > **Set the password**, setting the `Administrator` user password has the following issues:
 

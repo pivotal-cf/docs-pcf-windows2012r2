@@ -11,7 +11,7 @@ This topic provides a description of how Windows cells work in Pivotal Cloud Fou
 
 App instances in PCF run inside containers. [Garden](../concepts/architecture/garden.html) is the API that creates and manages these containers, and Garden Windows implements Garden on Windows.
 
-By deploying the [PCF Runtime for Windows](deploy-windows.html) tile, operators create a Windows [cell](../concepts/architecture/index.html#diego-cell) from a [stemcell](https://bosh.io/docs/stemcell.html) that contains the Windows Server 2012 operating system. Because Windows does not natively support Linux-style containers, Garden Windows uses an open-source library called IronFrame to implement containerization on Windows. IronFrame uses features of the Windows kernel to isolate resources that would otherwise be shared, creating containers comparable to those that exist on Linux.
+By deploying the [PAS for Windows 2012R2](deploy-windows.html) tile, operators create a Windows [cell](../concepts/architecture/index.html#diego-cell) from a [stemcell](https://bosh.io/docs/stemcell.html) that contains the Windows Server 2012 operating system. Because Windows does not natively support Linux-style containers, Garden Windows uses an open-source library called IronFrame to implement containerization on Windows. IronFrame uses features of the Windows kernel to isolate resources that would otherwise be shared, creating containers comparable to those that exist on Linux.
 
 A Windows cell includes the following components:
 

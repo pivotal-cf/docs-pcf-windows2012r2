@@ -5,14 +5,14 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to troubleshoot Windows cells deployed by Pivotal Cloud Foundry (PCF) Runtime for Windows.
+This topic describes how to troubleshoot Windows cells deployed by Pivotal Application Service (PAS) for Windows 2012R2.
 
 ##<a id='logs'></a> Retrieve Logs
 
 Perform the following steps to retrieve the logs for the Windows cell:
 
 1. Navigate to the Ops Manager Installation Dashboard.
-1. Click the **PCF Runtime for Windows** tile.
+1. Click the **PAS for Windows 2012R2** tile.
 1. Click the **Status** tab.
 1. Under the **Logs** column, click the download icon for the Windows cell you want to retrieve logs from.
 1. Click the **Logs** tab.
@@ -23,7 +23,7 @@ Perform the following steps to retrieve the logs for the Windows cell:
 	* `/metron_agent_windows/`
 	* `/rep_windows/`
 
-Hakim is a diagnostic tool that reveals common configuration issues with Windows cells. Because PCF Runtime for Windows runs Hakim as a BOSH job, the logs may include Hakim error messages. Refer to the [section](#hakim-error) below for a list of Hakim error messages and their possible solutions.
+Hakim is a diagnostic tool that reveals common configuration issues with Windows cells. Because PAS for Windows 2012R2 runs Hakim as a BOSH job, the logs may include Hakim error messages. Refer to the [section](#hakim-error) below for a list of Hakim error messages and their possible solutions.
 
 ###<a id='hakim-error'></a> Hakim Error Messages
 
@@ -31,7 +31,7 @@ Hakim is a diagnostic tool that reveals common configuration issues with Windows
 
 `The following processes are not running`
 
-This usually indicates a failed deployment. Try [redeploying](deploy-windows.html) the PCF Runtime for Windows tile.
+This usually indicates a failed deployment. Try [redeploying](deploy-windows.html) the PAS for Windows 2012R2 tile.
 
 <hr>
 
@@ -120,7 +120,7 @@ Perform the following steps to connect to your Windows cell to run diagnostics:
     garden-windows     ...              ...            -        latest
     </pre>
 
-1. Obtain login credentials for your Windows cell. If you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PCF Runtime for Windows tile, this is the password you entered.  
+1. Obtain login credentials for your Windows cell. If you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PAS for Windows 2012R2 tile, this is the password you entered.  
 If you chose **Use Random Administrator Password** when you configured the tile, follow the steps for your IaaS:
 	* **Google Cloud Platform (GCP)**:
 		1. Navigate to the Compute Engine Dashboard.
