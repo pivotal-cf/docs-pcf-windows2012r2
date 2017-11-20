@@ -13,8 +13,8 @@ To configure a KMS host, you edit the [runtime config](https://bosh.io/docs/runt
 
 1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the <em>Advanced Troubleshooting with the BOSH CLI</em> topic to target and log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
 
-1. Use the BOSH CLI v2 to show your current runtime config by running `bosh2 -e YOUR-ENV runtime-config`. For example:
-	<pre class="terminal">$ bosh2 -e gcp runtime-config</pre>
+1. Use the BOSH CLI v2 to show your current runtime config by running `bosh -e YOUR-ENV runtime-config`. For example:
+	<pre class="terminal">$ bosh -e gcp runtime-config</pre>
 1. Copy the contents of your existing runtime config into a new YAML file.
 1. Include the Windows Utilities Release in your new runtime config:
 
@@ -41,6 +41,6 @@ To configure a KMS host, you edit the [runtime config](https://bosh.io/docs/runt
 
 1. Update the BOSH Director with your new runtime config. For example:
 	<pre class="terminal">
-	$ bosh2 -e gcp update-runtime-config config.yml
+	$ bosh -e gcp update-runtime-config config.yml
 	</pre>
 1. Redeploy the PCF Runtime for Windows tile by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**.
