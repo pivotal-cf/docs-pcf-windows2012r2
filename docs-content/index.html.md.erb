@@ -80,9 +80,6 @@ Deployments of Windows Diego Cells via PAS for Windows 2012R2 have the following
 
 * You cannot push Docker or other OCI-compatible images to Windows cells.
 
-These limitations will be addressed in subsequent versions of the product.
-
-
 ## <a id='issues'></a>Known Issues
 
 PAS for Windows 2012R2 has the following known issues:
@@ -102,7 +99,7 @@ PAS for Windows 2012R2 has the following known issues:
       - Create a user in the GCP cloud management console.
       - Use the [Enable SSH](#) feature.
 
-      - For AWS and vSphere deployments: You can set a password for the user called `Administrator,` but the password must be 8-14 characters and must use letters, numbers, and the `!` character, which is the only working special character.
+      - For AWS and vSphere deployments: You can set a password for the user called `Administrator`, but the password must be 8-14 characters and is limited to letters, numbers, and the `!` character, which is the only working special character.
 
       - For all IaaSes, for stemcell versions 1200.5 and later, the password for the user called `Administrator` is randomized by default to provide additional security in production settings.
 
@@ -110,8 +107,8 @@ PAS for Windows 2012R2 has the following known issues:
 
 * In the **Resource Config** pane, setting VM disk sizes has the following limitations. See the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table for details:
 
-  - AWS: For stemcells earlier than 1200.9, setting disk size value has no effect. VM disks will be 30GB.
+  - AWS: For stemcells earlier than 1200.9, setting disk size value has no effect. VM disks are 30 GB.
 
-  - GCP: Setting the disk size only works for values 50GB or larger.
+  - GCP: Setting the disk size only works for values 50 GB or larger.
 
   - vSphere: Setting disk size value has no effect. VM disks will match the disk size of the stemcell you create.
