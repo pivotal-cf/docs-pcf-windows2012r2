@@ -11,7 +11,7 @@ Operators can install PAS for Windows 2012R2 on Microsoft Azure, VMware vSphere,
 
 ## <a id='overview'></a>Overview
 
-Operators who want to enable developers to push .NET Framework applications can deploy Windows-based Diego cells in PCF via the PAS for Windows 2012R2 tile.
+Operators who want to enable developers to push .NET Framework applications can deploy Windows-based Diego cells in PCF with the PAS for Windows 2012R2 tile.
 
 Deploying this tile creates a separate BOSH deployment populated with the Garden-Windows BOSH release, which runs on a Windows cell built from a Windows Server 2012R2 stemcell. This lets PCF deploy Windows-based Diego cells in addition to Linux-based Diego cells.
 
@@ -62,20 +62,20 @@ Due to Microsoft's licensing requirements, operators must either bring their own
 
 ## <a id='limitations'></a>Limitations
 
-Deployments of Windows Diego Cells via PAS for Windows 2012R2 have the following limitations:
+Deployments of Windows Diego Cells with PAS for Windows 2012R2 have the following limitations:
 
 * Because of the process management characteristics of Windows Server 2012R2, Windows cells can host a maximum of 40 app instances per cell. Operators should take this density constraint into account when planning the sizes of their PAS for Windows 2012R2 deployments, in addition to CPU, disk, and memory needs.
 
 * The following Cloud Foundry features are not supported by PAS for Windows 2012R2:
 
-  - Diego SSH (i.e. the `cf ssh` command). This is due to limitations of the inherent file system isolation characteristics of Windows Server 2012R2.
+  - Diego SSH, i.e. the `cf ssh` command. This is due to limitations of the inherent file system isolation characteristics of Windows Server 2012R2.
   - Volume services. For mounting SMB shares, developers should access SMB volumes from their applications directly.
   - Container-to-container networking. The IronFrame library that provides container-like features on Windows Server 2012R2 does not support container networking. IronFrame binds virtual container ports to the host.
 
 
 * The following Windows technologies are not supported by PAS for Windows 2012R2:
 
-  - Active Directory Domain Services. i.e. joining Windows cells to an Active Directory domain.
+  - Active Directory Domain Services, i.e. joining Windows cells to an Active Directory domain.
   - Integrated Windows Authentication. Instead, operators should deploy Active Directory Federation Services and the Pivotal SSO tile to enable OAuth-based authentication.
 
 * You cannot push Docker or other OCI-compatible images to Windows cells.
