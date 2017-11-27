@@ -135,7 +135,7 @@ If you chose **Use Random Administrator Password** when you configured the tile,
 		1. Under **Support + Troubleshooting**, click  **Reset password**.
 		1. Enter a username and password and click **Update**. Do not use `Administrator`, as this username is disallowed by Azure.
 		- If the username does not already exist, Azure creates new user account in the Administrators group.
-	* **vSphere** or **Amazon Web Services (AWS)**: There is no way to obtain the current Administrator password through the IaaS, because the BOSH agent randomizes the password on startup. To log into a Windows cell as admin, you need to configure the PCF Runtime Tile with **VM Options** > **Set the Password**. Otherwise, you can access cell VMs via SSH.
+	* **vSphere** or **Amazon Web Services (AWS)**: There is no way to obtain the current Administrator password through the IaaS, because the BOSH agent randomizes the password on startup. To log into a Windows cell as admin, you need to configure the PCF Runtime Tile with **VM Options** > **Set the Password**. Otherwise, you can access cell VMs using SSH.
 
 1. Open your RDP client. The examples below use the Microsoft Remote Desktop app.
 
