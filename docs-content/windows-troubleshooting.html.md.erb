@@ -7,7 +7,47 @@ owner: Greenhouse
 
 This topic describes how to troubleshoot Windows cells deployed by Pivotal Application Service (PAS) for Windows 2012R2.
 
-##<a id='logs'></a> Retrieve Logs
+##<a id='log-types'></a> Windows Cell Log Types
+
+Windows cells generate two types of logs:
+
+* **BOSH job logs**, such as `rep_windows` and `consul_agent_windows`. These logs stream to the syslog server configured in the PAS tile **System Logging** pane, along with other PCF component logs. The names of these BOSH job logs correspond to the names of the logs emitted by Linux Diego cells.
+
+* **Windows Event logs**. These stream to the syslog server configured in the PAS for Windows 2012R2 **System Logging** pane and are downloadable through Ops Manager, as described [below](#logs).
+
+##<a id='logs'></a> Access Windows Event Logs
+
+PCF operators can access log messages from Windows Diego cells in two ways:
+
+* Configure PAS for Windows to [send](#syslog) all Windows cell logs to an external syslog server.
+
+* [Download](#download) archived logs from each Windows cell individually.
+
+Troubleshooting logs may include error messages from the diagnostic tool Hakim, as [described below](#hakim-error).
+
+###<a id='syslog'></a> Send Cell Logs to a Syslog Server
+
+To forward Windows cell log messages to an external syslog server, complete the following steps:
+
+1. Navigate to the Ops Manager Installation Dashboard.
+
+1. Click the **PAS for Windows 2012R2** tile.
+
+1. Under the the **Settings** tab, select the **System Logging** pane.
+  <%= image_tag("win-syslog-config.png") %>
+
+1. Under **Enable Syslog for VM logs?**, click **Enable**
+
+1. Under **Address**, enter the IP address of your syslog server.
+
+1. Under **Port**, enter the port of your syslog server. The typical port for a syslog server is `514`.
+  <p class="note"><strong>Note</strong>: The host must be reachable from the PAS network. Ensure your syslog server listens on external interfaces.</p>
+
+1. Under **Protocol**, select the transport protocol to use when forwarding logs.
+
+1. Click **Save**.
+
+###<a id='download'></a> Download Cell Logs
 
 Perform the following steps to retrieve the logs for the Windows cell:
 
