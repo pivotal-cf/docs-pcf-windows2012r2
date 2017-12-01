@@ -50,23 +50,3 @@ To rotate your credentials in PAS for Windows 2012R2, re-deploy Elastic Runtime 
 
 1. Click **Apply Changes**.
 
-##<a id='upgrade-apps'></a> Upgrade Windows Apps
-
-Consult the following list of scenarios for instructions about upgrading your apps.
-
-* If your .NET app was previously pushed with the `binary_buildback` and you are relying on the <code>WebAppServer.exe</code> you must push with the <code>hwc\_buildpack</code>:
-
-    <pre class="terminal">$ cf push APP-NAME -s windows2012R2 -b hwc_buildpack</pre>
-    By passing `windows2012R2` with the `-s` flag, you instruct PCF to run the app in the Windows cell. If you are not pushing your app from its directory, add the `-p` flag to specify the path to the directory that contains the app.
-<br><br>
-An app with the <code>hwc\_buildpack</code> should not be pushed with the <code>-c</code> flag.
-<br><br>
-If you try to <code>cf restage</code>, your app will fail to restage because you cannot switch to the <code>hwc\_buildpack</code> using <code>cf restage</code>.
-
-* If you have a binary app you must push with the <code>-c</code> flag:
-
-    <pre class="terminal">
-    $ cf push APP-NAME -s windows2012R2 -b binary_buildpack -c PATH-TO-BINARY
-    </pre>
-
-* If your app needs a custom start command and requires the <code>WebAppServer.exe</code>, you must update the start command to reflect the path to <code>hwc.exe</code>, which is provided by the HWC buildpack.
