@@ -1,5 +1,5 @@
 ---
-title: About Windows Stemcells
+title: Using Windows Stemcells
 owner: Greenhouse
 ---
 
@@ -10,8 +10,7 @@ owner: Greenhouse
 A _stemcell_ is a customized operating system image containing the filesystem for BOSH-managed virtual machines. When deployed, it includes a process, the _BOSH Agent_, which is pre-configured to communicate with the orchestrating VM, the _BOSH Director_.
 The BOSH Agent is responsible for executing and monitoring jobs on the VM.
 
-PAS for Windows 2012R2 deployments currently use a stemcell based on Windows Server 2012R2.
-
+PAS for Windows 2012R2 deployments currently use a stemcell based on Windows Server 2012 R2.
 
 ## <a id="sizing"></a> Root Disk Sizing
 
@@ -51,12 +50,13 @@ In the PAS for Windows 2012R2 tile > **Resource Config** pane, the VM types that
 
 ## <a id="light-stemcells"></a> Light Stemcells
 
-_Light stemcells_ are metadata files that enable an operator to deploy virtual machines without uploading the full operating system manually. Light stemcells are available for Microsoft Azure, AWS, and GCP, which typically bill a surcharge for the associated Windows licensing cost. See the documentation on those IaaSes for details.
+_Light stemcells_ are metadata files that enable you to deploy VMs without uploading the full operating system manually. These stemcells reference images of Windows Server 2012 R2 hosted on public IaaSes.
+
+Light stemcells are available for Microsoft Azure, AWS, and GCP, which typically bill a surcharge for the associated Windows licensing cost. See the documentation on those IaaSes for details.
 
 Below is IaaS-specific documentation for light stemcells you can use with the PAS for Windows 2012R2 tile:
 
-+ <a href="./azure-light-stemcell.html" class="subnav">Deploying on Azure</a>
-
++ <a href="./azure-light-stemcell.html" class="subnav">Deploying the Azure Light Stemcell</a>
 
 ## <a id="stemcell-builds"></a> Stemcell Builds
 

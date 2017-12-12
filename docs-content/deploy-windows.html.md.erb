@@ -62,7 +62,7 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 	
     <%= image_tag('errands-hwc.png') %>
 
-1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed. Ensure that all VMs have disk sizes that match the possible sizes listed in the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table.
+1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed. Ensure that all VMs have disk sizes that match the possible sizes listed in the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table. If you are deploying PAS for Windows 2012R2 on Azure, see the [Configure Resources](./azure-light-stemcell.html#req) section of the *Deploying the Azure Light Stemcell* topic.
 
 1. Click **Save**.
 
@@ -71,8 +71,8 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
     <%= image_tag('pcf-windows-tile-stemcell.png') %>
 
 1. Retrieve the stemcell by following the steps below for your IaaS.
-    * For vSphere, you must create your own stemcell. See either [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand) for more information.
-    * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows Server)** section of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
+    * For vSphere, you must create your own stemcell. For more information, see either [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand).
+    * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows)** page of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server). For more information, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
 
 1. Click **Save**.
 
