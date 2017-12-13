@@ -5,7 +5,7 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic explains how to download and enable the Azure light stemcell. For more information about *light stemcells*, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
+This topic explains how to download and use the Azure light stemcell. For more information about *light stemcells*, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
 
 ## <a id="download"></a> Download the Azure Light Stemcell
 
@@ -13,6 +13,8 @@ To download the Azure light stemcell, perform the following steps:
 
 1. Navigate to [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
 2. Select **Azure Light Stemcell for Windows 2012R2 Server** from the **Release Download Files** section of the Stemcells for PCF (Windows) page.
+
+To start using the Azure light stemcell, perform the steps in the [Enable the Azure Light Stemcell](#use) and [Configure Resources](#req) sections.
 
 ## <a id="use"></a> Enable the Azure Light Stemcell
 
@@ -29,7 +31,7 @@ To use the Azure light stemcell, you must accept the corresponding license agree
 
 ## <a id="req"></a>Configure Resources
 
-When deploying or upgrading the PCF Runtime for Windows tile, configure the resources of Ops Manager Director and PCF Runtime for Windows as follows:
+When you deploy or upgrade the PAS for Windows 2012R2 tile, configure the resources of Ops Manager Director and PAS for Windows 2012R2 as follows:
 
 1. On the Ops Manager Installation Dashboard, select **PAS for Windows 2012R2**.
 1. In the **Settings** tab, select **Resource Config**.
@@ -41,4 +43,4 @@ When deploying or upgrading the PCF Runtime for Windows tile, configure the reso
 1. In the **VM Type** field, ensure that the Ops Manager compilation VM has an ephemeral disk of 128&nbsp;GB or larger.
 	<%= image_tag('ops-man-resources.png') %>
 
-For information about how to deploy and configure the PCF Runtime for Windows tile, see [Deploying PCF Runtime for Windows](./deploy-windows.html).
+For information about how to deploy and configure the PAS for Windows 2012R2 tile, see [Deploying PAS for Windows 2012R2](./deploy-windows.html).
