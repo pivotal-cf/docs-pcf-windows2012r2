@@ -87,16 +87,16 @@ If you chose **Use Random Administrator Password** when you configured the tile,
 		1. Navigate to the Compute Engine Dashboard.
 		1. Under **VM Instances**, select the instance of the Windows VM you want to log into.
 		1. At the top of the page, click **Create or reset Windows password**.
-		1. When prompted, enter a username under **Username**. Do not use `Administrator` as the username, as this account is disabled on GCP.
+		1. When prompted, enter a username under **Username**. Do not use `Administrator`, as this account is disabled on GCP.
 		1. Click **Set**. If the username does not already exist, a new user will be created in the Administrators group. 
-		- A popup appears with your one-time password. Record this password for logging into the Windows cell.
+		- A popup appears with your password. Record this password for logging into the Windows cell.
 	* **Azure**
 		1. Navigate to the Virtual machines pane
 		1. Select the instance of the Windows VM you want to log into.
 		1. Under **Support + Troubleshooting**, click  **Reset password**.
 		1. Enter a username and password and click **Update**. Do not use `Administrator`, as this username is disallowed by Azure.
 		- If the username does not already exist, Azure creates new user account in the Administrators group.
-	* **vSphere** or **Amazon Web Services (AWS)**: There is no way to obtain the current Administrator password through the IaaS, because the BOSH agent randomizes the password on startup. To log into a Windows cell as admin, you need to configure the PCF Runtime Tile with **VM Options** > **Set the Password**. Otherwise, you can access cell VMs using SSH.
+	* **vSphere** or **Amazon Web Services (AWS)**: There is no way to obtain the current Administrator password through the IaaS, because the BOSH agent randomizes the password on startup. To log into a Windows cell as admin, you need to configure the PCF Runtime Tile with **VM Options** > **Set the Password**. Otherwise, you can access the Windows cell using SSH.
 
 1. Open your RDP client. The examples below use the Microsoft Remote Desktop app.
 
