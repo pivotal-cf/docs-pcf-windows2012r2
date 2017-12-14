@@ -23,8 +23,6 @@ PCF operators can access log messages from Windows Diego cells in two ways:
 
 * [Download](#download) archived logs from each Windows cell individually.
 
-Troubleshooting logs may include error messages from the diagnostic tool Hakim, as [described below](#hakim-error).
-
 ###<a id='syslog'></a> Send Cell Logs to a Syslog Server
 
 To forward Windows cell log messages to an external syslog server, complete the following steps:
@@ -62,83 +60,6 @@ Perform the following steps to retrieve the logs for the Windows cell:
 	* `/garden-windows/`
 	* `/metron_agent_windows/`
 	* `/rep_windows/`
-
-Hakim is a diagnostic tool that reveals common configuration issues with Windows cells. Because PAS for Windows 2012R2 runs Hakim as a BOSH job, the logs may include Hakim error messages. Refer to the [section](#hakim-error) below for a list of Hakim error messages and their possible solutions.
-
-###<a id='hakim-error'></a> Hakim Error Messages
-
-**Processes**
-
-`The following processes are not running`
-
-This usually indicates a failed deployment. Try [redeploying](deploy-windows.html) the PAS for Windows 2012R2 tile.
-
-<hr>
-
-**NTP**
-
-`There was an error detecting ntp synchronization on your machine.
-An accurate system clock is essential for internal Cloud Foundry metric reports.
-Please configure your NTP settings, if not already done.
-We recommend that your firewall have outbound rules set for UDP on port 123.
-In addition, ensure that your 'DnsCache' service is running`
-
-If NTP is not configured, clock skew with other PCF components can occur. Clock skew can result in odd errors, such as not receiving any metrics from apps running on the affected machine. Ensure that you are using the same NTP server on your Windows cell as the rest of your PCF deployment.
-
-<hr>
-
-**Firewall** 
-
-`Windows firewall service is not enabled. The Windows firewall is required in order to enforce Application Security Group rules. Running without the firewall is possible, but strongly not recommended.`
-
- Garden Windows enforces PCF security group settings for apps running on the Windows cell through the Windows firewall. Apps can run without this, but security groups do not work correctly and apps have unrestricted network access. 
-
- To resolve this error, enable the Windows firewall. Perform the following steps in your RDP session to access the Windows firewall configuration:
-
- 1. Open the Server Manager from the task bar.
- 1. Click **Tools** in the upper right and select **Windows Firewall with Advanced Security**.
- 1. Configure and enable the Windows firewall.
-
- <hr>
-
-**Fair Share**
-
-`Fair Share CPU Scheduling must be disabled`
-
-You must disable Fair Share CPU scheduling for your Windows cell to function properly. Perform the following steps in your RDP session:
-
-1. Open the Registry Editor at `C:\Windows\regedit.exe`. 
-1. Navigate to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Quota System\`.
-1. Double-click the `EnableCpuQuota` value.
-1. Change the **Value data** from `1` to `0`.
-1. Click **OK**.
-
-<hr>
-
-**Container**
-
-`Failed to create container`
-
-This usually indicates an issue with the Windows containerization service. Contact [Pivotal Support](https://support.pivotal.io/) and provide the full output of this error.
-
-<hr>
-
-**Consul**
-
-`Failed to resolve consul host`
-
-This usually indicates interference with DNS resolution on your Windows cell. To resolve this error, perform the following steps in your RDP session to set `127.0.0.1` as the primary DNS server for the active network adapter:
-
-1. Open the Control Panel.
-1. Click **Network and Internet**
-1. Click **Network and Sharing Center**.
-1. Click **Change adapter settings** on the left.
-1. Double-click your active network adapter.
-1. Click **Properties**.
-1. Select **Internet Protocol Version 4 (TCP/IPv4)**.
-1. Click **Properties**.
-1. Ensure that **Use the following DNS server addresses** is selected and enter `127.0.0.1` for **Preferred DNS server**.
-1. Click **OK**. 
 
 ##<a id='rdp'></a> Connect to the Windows Cell
 
