@@ -68,55 +68,46 @@ Perform the following steps to connect to your Windows cell to run diagnostics:
 1. Download and install a Remote Desktop Protocol (RDP) client.
 	* For Mac OS X, download the Microsoft Remote Desktop app from the [Mac App Store](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12).
 	* For Windows, download the Microsoft Remote Desktop app from [Microsoft](https://www.microsoft.com/en-us/store/p/microsoft-remote-desktop/9wzdncrfj3ps).
-	* For Linux/UNIX, download a RDP client like [rdesktop](http://www.rdesktop.org/).
+	* For Linux/UNIX, download an RDP client like [rdesktop](http://www.rdesktop.org/).
 
-1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the <em>Advanced Troubleshooting with the BOSH CLI</em> topic to log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
+1. Upload the runtime config. **Note:** The runtime config applies to all VMS managed by BOSH, and therefore will enable RDP on all Windows VMs.
+      <pre class="terminal"> $ bosh update runtime-config &lt;runtime config filename&gt; </pre>
 
-1. Retrieve the IP address of your Windows cell using the BOSH CLI. Run the following command, replacing `MY-ENV` with the alias you assigned to your BOSH Director:
-    <pre class="terminal">
-    $ bosh -e MY-ENV -d garden-windows
-    Using environment 'DIRECTOR-IP' as client 'admin'
+Run the following command to retrieve the IP address of the Windows cell you would like to connect to:
+      <pre class="terminal"> $ bosh vms </pre>
 
-    Name               Release(s)       Stemcell(s)    Team(s)  Cloud Config
-    garden-windows     ...              ...            -        latest
-    </pre>
+####Obtain login credentials for your Windows cell.
+   - AWS or vSphere: if you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PCF Runtime for Windows tile, the username is `Administrator` and the password is the one you entered. If you did not set the password, it is not possible to obtain the current Administrator password through the IaaS, because the BOSH agent randomized the password.
+   - GCP: follow the [linked instructions](https://cloud.google.com/compute/docs/instances/windows/connecting-to-windows-instance) for obtaining credentials.
+   - Azure: follow the [linked instructions](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/connect-logon) for obtaining credentials.
 
-1. Obtain login credentials for your Windows cell. If you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PAS for Windows 2012R2 tile, this is the password you entered.  
-If you chose **Use Random Administrator Password** when you configured the tile, follow the steps for your IaaS:
-	* **Google Cloud Platform (GCP)**:
-		1. Navigate to the Compute Engine Dashboard.
-		1. Under **VM Instances**, select the instance of the Windows VM you want to log into.
-		1. At the top of the page, click **Create or reset Windows password**.
-		1. When prompted, enter a username under **Username**. Do not use `Administrator`, as this account is disabled on GCP.
-		1. Click **Set**. If the username does not already exist, a new user will be created in the Administrators group. 
-		- A popup appears with your password. Record this password for logging into the Windows cell.
-	* **Azure**
-		1. Navigate to the Virtual machines pane
-		1. Select the instance of the Windows VM you want to log into.
-		1. Under **Support + Troubleshooting**, click  **Reset password**.
-		1. Enter a username and password and click **Update**. Do not use `Administrator`, as this username is disallowed by Azure.
-		- If the username does not already exist, Azure creates new user account in the Administrators group.
-	* **vSphere** or **Amazon Web Services (AWS)**: There is no way to obtain the current Administrator password through the IaaS, because the BOSH agent randomizes the password on startup. To log into a Windows cell as admin, you need to configure the PCF Runtime Tile with **VM Options** > **Set the Password**. Otherwise, you can access the Windows cell using SSH.
+####Establish an RDP connection
+  - Open your RDP client. The examples below use the Microsoft Remote Desktop app.
 
-1. Open your RDP client. The examples below use the Microsoft Remote Desktop app.
-
-1. Click **New** and enter your connection information:
+  - Click **New** and enter your connection information:
 	<%= image_tag('rdp-connect.png') %>
 	* **Connection name**: Enter a name for this connection.
 	* **PC name**: Enter the IP address of your Windows cell.
-	* **User name**: Enter `Administrator`.
-	* **Password**: Enter the password of your Windows cell that you obtained above.
+	* **User name**: Enter the appropriate username.
+	* **Password**: Enter the password of your Windows cell that you created.
 
 1. To mount a directory on your local machine as a drive in the Windows cell, perform the following steps:
 	1. From the same **Edit Remote Desktops** window as above, click **Redirection**.
-	1. Click the plus icon at the bottom left. 
+	1. Click the plus icon at the bottom left.
 	<%= image_tag('rdp-redirection.png') %>
-	1. For **Name**, enter the name of the drive as it will appear in the Windows cell. For **Path**, enter the path of the local directory. 
+	1. For **Name**, enter the name of the drive as it will appear in the Windows cell. For **Path**, enter the path of the local directory.
 	1. Click **OK**.
 
 1. Close the **Edit Remote Desktops** window and double-click the newly added connection under **My Desktops** to open a RDP connection to the Windows cell.
 
 1. In the RDP session, you can use the [Consul CLI](#consul) to diagnose problems with your Windows cell.
+
+**Notes:**
+
+  - **For vSphere**, it is also possible to connect to your windows cell using the vCenter console once the Administrator password has been set.
+
+  - **If the Windows is not accessible from your host**, tunnel through the Ops Manager VM. To do this, SSH into the Ops Manager VM with the flag `-L 3389:<Windows Cell IP>:3389`
+    and then use IP 127.0.0.1 from your RDP client.
 
 ###<a id='consul'></a> Consul CLI
 
@@ -125,7 +116,7 @@ Perform the following steps to use the Consul CLI on your Windows cell to diagno
 1. In your RDP session, open a PowerShell window.
 1. Change into the directory that contains the Consul CLI binary:
 	<pre class="terminal">
-	PS C:\Users\Administrator> cd C:\var\vcap\packages\consul-windows\bin\ 
+	PS C:\Users\Administrator> cd C:\var\vcap\packages\consul-windows\bin\
 	</pre>
 1. Use the Consul CLI to list the members of your Consul cluster:
 	<pre class="terminal">
