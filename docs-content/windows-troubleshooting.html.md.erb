@@ -61,7 +61,7 @@ Perform the following steps to retrieve the logs for the Windows cell:
 	* `/metron_agent_windows/`
 	* `/rep_windows/`
 
-##<a id='rdp'></a> Connect to the Windows Cell
+##<a id='rdp'></a> Connect to a Windows Cell
 
 Perform the following steps to connect to your Windows cell to run diagnostics:
 
@@ -70,11 +70,10 @@ Perform the following steps to connect to your Windows cell to run diagnostics:
 	* For Windows, download the Microsoft Remote Desktop app from [Microsoft](https://www.microsoft.com/en-us/store/p/microsoft-remote-desktop/9wzdncrfj3ps).
 	* For Linux/UNIX, download an RDP client like [rdesktop](http://www.rdesktop.org/).
 
-1. Upload the runtime config. **Note:** The runtime config applies to all VMS managed by BOSH, and therefore will enable RDP on all Windows VMs.
-      <pre class="terminal"> $ bosh update runtime-config &lt;runtime config filename&gt; </pre>
-
-Run the following command to retrieve the IP address of the Windows cell you would like to connect to:
-      <pre class="terminal"> $ bosh vms </pre>
+1. Select the **Enable Remote Desktop Protocol** checkbox under `VM Options` in the tile.
+   <%= image_tag('vm-options.png') %>
+  
+1. Obtain the IP address of the Windows cell you would like to connect to from the `Status` tab of the tile.
 
 ####Obtain login credentials for your Windows cell.
    - AWS or vSphere: if you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PCF Runtime for Windows tile, the username is `Administrator` and the password is the one you entered. If you did not set the password, it is not possible to obtain the current Administrator password through the IaaS, because the BOSH agent randomized the password.
