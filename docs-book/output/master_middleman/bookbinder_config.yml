@@ -5,9 +5,9 @@
 :subnav_templates:
   windows: windows_subnav
 :template_variables: 
-:local_repo_dir: "/Users/pivotal/workspace/docs-pcf-windows"
+:local_repo_dir: "/Users/pspinrad/workspace/docs-pcf-windows2012r2"
 :workspace: !ruby/object:Pathname
-  path: "/Users/pivotal/workspace/docs-pcf-windows/docs-book/output/master_middleman/source"
+  path: "/Users/pspinrad/workspace/docs-pcf-windows2012r2/docs-book/output/master_middleman/source"
 :feedback_enabled: 
 :repo_link_enabled: true
 :repo_links:
