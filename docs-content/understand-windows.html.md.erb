@@ -73,6 +73,6 @@ When the Garden Windows server directs a PAS for Windows 2012R2 cell to shut dow
 
 1. Deletes the container user account on the cell.
 
-Due to a known limitation of the IronFrame containerization framework, terminating processes with the `TerminateProcess` kernel32 syscall may leave behind ghost connections and pending transactions that put the app in an inconsistent state.
+Due to a known limitation of the IronFrame containerization framework, terminating processes with the `TerminateProcess` kernel32 syscall may leave behind ghost connections and pending transactions that put the app in an inconsistent state.  See the [Knowledge Base](https://discuss.pivotal.io/hc/en-us/articles/115005092734) for more information on how .NET apps shut down on PCF Windows cells.
 
 Shutdown requests can come from `cf delete` or `cf scale` commands, or from the Diego system [balancing apps](https://docs.pivotal.io/pivotalcf/concepts/diego/diego-auction.html).
