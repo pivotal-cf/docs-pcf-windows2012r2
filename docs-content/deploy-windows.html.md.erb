@@ -99,16 +99,6 @@ See [Assign a Tile to an Isolation Segment](#assign-isolation) for how to associ
 
 See the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic for how to add an isolation segment to the CCDB.
 
-###<a id='antivirus'></a> Configure Antivirus for Windows Cells
-
-Diego cell VMs routinely download and uncompress files, while antivirus scanners scan files once they are downloaded or uncompressed. When an antivirus scanner program runs in a directory that BOSH is actively downloading or compressing into, scanner actions can block BOSH processes and cause hard-to-debug “Access is denied” errors.
-
-To prevent these errors, configure your antivirus scanner to disable **on-access scanning** for the following directories on your Windows cell:
-
-* `C:\bosh`
-* `C:\var\vcap`
-* `C:\containerizer`
-
 ###<a id='replicate'></a> Replicate a Tile
 
 To make multiple copies of the **PAS for Windows 2012R2** tile that you can assign to different isolation segments, use the Replicator tool as follows:
