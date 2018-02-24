@@ -77,7 +77,9 @@ Deployments of Windows Diego Cells with PAS for Windows 2012R2 have the followin
   - Active Directory Domain Services, i.e. joining Windows cells to an Active Directory domain.
   - Integrated Windows Authentication. Instead, operators should deploy Active Directory Federation Services and the Pivotal SSO tile to enable OAuth-based authentication.
 
-* You cannot push Docker or other OCI-compatible images to Windows cells.
+* You cannot push Docker or other OCI-compatible images to Windows 2012R2 cells.
+
+Except for the inability to host OCI-compatible images, [PAS for Windows](../windows/index.html) does not have any of the limitations above.
 
 ## <a id='issues'></a>Known Issues
 
@@ -113,3 +115,6 @@ PAS for Windows 2012R2 has the following known issues:
   - vSphere: Setting disk size value has no effect. VM disks will match the disk size of the stemcell you create.
 
 * When a PAS for Windows 2012R2 container shuts down, it may leave behind ghost connections and pending transactions that put the app in an inconsistent state. This is due to a known limitation of the IronFrame containerization framework. See the [Container Shutdown](./understand-windows.html#container-shutdown) section for details.
+
+[PAS for Windows](../windows/index.html) does not have any of the above issues.
+
