@@ -69,17 +69,21 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 
 1. Click **Save**.
 
-1. Click **Stemcell**. Record the stemcell version number required by the tile. 
-
-    <%= image_tag('pcf-windows-tile-stemcell.png') %>
-
 1. Retrieve the stemcell by following the steps below for your IaaS.
     * For vSphere, you must create your own stemcell. For more information, see either [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand).
     * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows)** page of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server). For more information, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
 
-1. Click **Save**.
+1. Return to the Ops Manager Installation Dashboard and click **Stemcell Library**.
 
-1. Return to the Ops Manager Installation Dashboard and click **Apply Changes** to install the PAS for Windows 2012R2 tile.
+1. Click **Import Stemcell** to import the stemcell you retrieved.
+
+1. When prompted, enable the Ops Manager product checkbox to stage your stemcell.
+
+1. Click **Apply Stemcell to Products**.
+
+1. Click the **Installation Dashboard** link to return to the Installation Dashboard.
+
+1. Click **Apply Changes** to install the PAS for Windows 2012R2 tile.
 
 ##<a id='copy'></a> Step 4: (Optional) Create More Tiles
 
