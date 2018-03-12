@@ -31,16 +31,16 @@ To use the Azure light stemcell, you must accept the corresponding license agree
 
 ## <a id="req"></a>Configure Resources
 
-When you deploy or upgrade the PAS for Windows 2012R2 tile on Azure, configure the resources of BOSH Director and PAS for Windows 2012R2 as follows:
+When you deploy or upgrade the PCF Runtime for Windows tile on Azure, configure the resources of Ops Manager Director and PCF Runtime for Windows as follows:
 
-1. On the Ops Manager Installation Dashboard, select **PAS for Windows 2012R2**.
+1. On the Ops Manager Installation Dashboard, select **PCF Runtime for Windows**.
 1. In the **Settings** tab, select **Resource Config**.
 1. In the **VM Type** field, ensure that **Windows Diego Cell** has a disk size of 128&nbsp;GB or larger.
 1. Ensure that **Install HWC Buildpack Errand** has a VM disk size of 128&nbsp;GB or larger.
 	<%= image_tag('tile-resource-config.png') %>
-1. Navigate to the **BOSH Director**.
+1. Navigate to **Ops Manager Director**.
 1. In the **Settings** tab, select **Resource Config**.
 1. In the **VM Type** field, ensure that the Ops Manager compilation VM has an ephemeral disk of 128&nbsp;GB or larger.
 	<%= image_tag('ops-man-resources.png') %>
 
-For information about how to deploy and configure the PAS for Windows 2012R2 tile, see [Deploying PAS for Windows 2012R2](./deploy-windows.html).
+For information about how to deploy and configure the PCF Runtime for Windows tile, see [Deploying PCF Runtime for Windows](./deploy-windows.html).

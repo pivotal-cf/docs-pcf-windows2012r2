@@ -10,7 +10,8 @@ owner: Greenhouse
 A _stemcell_ is a customized operating system image containing the filesystem for BOSH-managed virtual machines. When deployed, it includes a process, the _BOSH Agent_, which is pre-configured to communicate with the orchestrating VM, the _BOSH Director_.
 The BOSH Agent is responsible for executing and monitoring jobs on the VM.
 
-PAS for Windows 2012R2 deployments currently use a stemcell based on Windows Server 2012 R2.
+PCF Runtime for Windows deployments currently use a stemcell based on Windows Server 2012 R2.
+
 
 ## <a id="sizing"></a> Root Disk Sizing
 
@@ -30,7 +31,7 @@ The size of the stemcell's root disk determines the minimum root disk size of an
   <tr>
     <th>AWS</th>
     <td>30 GB</td>
-    <td>30 GB or larger (for stemcell 1200.9 and later)</td>
+    <td>30 GB or larger (for stemcell 1200.10 and later)</td>
   </tr>
   <tr>
     <th>GCP</th>
@@ -46,7 +47,7 @@ The size of the stemcell's root disk determines the minimum root disk size of an
 
 <sup>\*</sup>Because you create your own stemcell on vSphere, you can control its root disk size. See [Creating a vSphere Stemcell Manually](./vsphere-stemcell-build.html) for more information.
 
-In the PAS for Windows 2012R2 tile > **Resource Config** pane, the VM types that you can choose from reflect the disk size constraints in the table above.
+In the PCF Runtime for Windows tile > **Resource Config** pane, the VM types that you can choose from reflect the disk size constraints in the table above.
 
 ## <a id="light-stemcells"></a> Light Stemcells
 
@@ -54,14 +55,15 @@ _Light stemcells_ are metadata files that enable you to deploy VMs without uploa
 
 Light stemcells are available for Microsoft Azure, AWS, and GCP, which typically bill a surcharge for the associated Windows licensing cost. See the documentation on those IaaSes for details.
 
-Below is IaaS-specific documentation for light stemcells you can use with the PAS for Windows 2012R2 tile:
+Below is IaaS-specific documentation for light stemcells you can use with the Runtime for Windows tile:
 
 + <a href="./azure-light-stemcell.html" class="subnav">Deploying the Azure Light Stemcell</a>
+
 
 ## <a id="stemcell-builds"></a> Stemcell Builds
 
 Because of the constraints placed on the distribution of Windows OS by Microsoft's licensing terms, operators must build stemcells for on-premise deployments from OS disk images (e.g. ISO files) licensed to them directly from Microsoft. This typically involves starting a Windows virtual machine, installing the BOSH agent and associated software, then exporting its disk image and converting it to a stemcell format.
 
-Below is IaaS-specific documentation for building stemcells for the PAS for Windows 2012R2 tile:
+Below is IaaS-specific documentation for building stemcells for the Runtime for Windows tile:
 
-+ <a href="./vsphere-stemcell-build.html" class="subnav"> vSphere Stemcell Build</a>
++ <a href="../windows/vsphere-stemcell-build.html" class="subnav"> vSphere Stemcell Build</a>

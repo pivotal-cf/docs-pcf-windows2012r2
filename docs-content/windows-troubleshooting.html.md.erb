@@ -5,21 +5,21 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to troubleshoot Windows cells deployed by Pivotal Application Service (PAS) for Windows 2012R2.
+This topic describes how to troubleshoot Windows cells deployed by Pivotal Cloud Foundry (PCF) Runtime for Windows.
 
 ##<a id='log-types'></a> Windows Cell Log Types
 
 Windows cells generate two types of logs:
 
-* **BOSH job logs**, such as `rep_windows` and `consul_agent_windows`. These logs stream to the syslog server configured in the PAS tile **System Logging** pane, along with other PCF component logs. The names of these BOSH job logs correspond to the names of the logs emitted by Linux Diego cells.
+* **BOSH job logs**, such as `rep_windows` and `consul_agent_windows`. These logs stream to the syslog server configured in the Elastic Runtime tile **System Logging** pane, along with other PCF component logs. The names of these BOSH job logs correspond to the names of the logs emitted by Linux Diego cells.
 
-* **Windows Event logs**. These stream to the syslog server configured in the PAS for Windows 2012R2 **System Logging** pane and are downloadable through Ops Manager, as described [below](#logs).
+* **Windows Event logs**. These stream to the syslog server configured in the PCF Runtime for Windows **System Logging** pane and are downloadable through Ops Manager, as described [below](#logs).
 
 ##<a id='logs'></a> Access Windows Event Logs
 
 PCF operators can access log messages from Windows Diego cells in two ways:
 
-* Configure PAS for Windows to [send](#syslog) all Windows cell logs to an external syslog server.
+* Configure PCF Runtime for Windows to [send](#syslog) all Windows cell logs to an external syslog server.
 
 * [Download](#download) archived logs from each Windows cell individually.
 
@@ -29,9 +29,9 @@ To forward Windows cell log messages to an external syslog server, complete the 
 
 1. Navigate to the Ops Manager Installation Dashboard.
 
-1. Click the **PAS for Windows 2012R2** tile.
+1. Click the **PCF Runtime for Windows** tile.
 
-1. Under the **Settings** tab, select the **System Logging** pane.
+1. Under the the **Settings** tab, select the **System Logging** pane.
   <%= image_tag("win-syslog-config.png") %>
 
 1. Under **Enable Syslog for VM logs?**, click **Enable**
@@ -39,7 +39,7 @@ To forward Windows cell log messages to an external syslog server, complete the 
 1. Under **Address**, enter the IP address of your syslog server.
 
 1. Under **Port**, enter the port of your syslog server. The typical port for a syslog server is `514`.
-  <p class="note"><strong>Note</strong>: The host must be reachable from the PAS network. Ensure your syslog server listens on external interfaces.</p>
+  <p class="note"><strong>Note</strong>: The host must be reachable from the PCF network. Ensure your syslog server listens on external interfaces.</p>
 
 1. Under **Protocol**, select the transport protocol to use when forwarding logs.
 
@@ -50,7 +50,7 @@ To forward Windows cell log messages to an external syslog server, complete the 
 Perform the following steps to retrieve the logs for the Windows cell:
 
 1. Navigate to the Ops Manager Installation Dashboard.
-1. Click the **PAS for Windows 2012R2** tile.
+1. Click the **PCF Runtime for Windows** tile.
 1. Click the **Status** tab.
 1. Under the **Logs** column, click the download icon for the Windows cell you want to retrieve logs from.
 1. Click the **Logs** tab.
@@ -69,11 +69,32 @@ Perform the following steps to connect to your Windows cell to run diagnostics:
 	* For Mac OS X, download the Microsoft Remote Desktop app from the [Mac App Store](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12).
 	* For Windows, download the Microsoft Remote Desktop app from [Microsoft](https://www.microsoft.com/en-us/store/p/microsoft-remote-desktop/9wzdncrfj3ps).
 	* For Linux/UNIX, download an RDP client like [rdesktop](http://www.rdesktop.org/).
-
-1. Select the **Enable Remote Desktop Protocol** checkbox under `VM Options` in the tile.
-   <%= image_tag('vm-options.png') %>
   
+1. You will need to add the [windows-utilities-release](https://github.com/cloudfoundry-incubator/windows-utilities-release) (version 0.4.0 and later) BOSH Add-on. Add the `enable_rdp` job to your runtime config. You can access your runtime config with `bosh runtime-config`. Here is an example runtime config that utilizes the `enable_rdp` addon:
+   <pre><code><span>releases:</span>
+   <span>- name: windows-utilities</span>
+   <span>  version: \<Release Version\></span>
+   <span></span>
+   <span>addons:</span>
+   <span>- name: enable\_rdp</span>
+   <span>  jobs:</span>
+   <span>  - name: enable\_rdp</span>
+   <span>    release: windows-utilities</span>
+   <span>  include:</span>
+   <span>    stemcell:</span>
+   <span>    - os: windows2012R2</span>
+   </code></pre>
+
+   Be certain that the `windows-utilities` release has been uploaded by checking the release version:
+      <pre class="terminal"> $ bosh releases </pre>If you discover that `windows-utilities` is missing, follow [these instructions](https://bosh.io/docs/create-release.html#dev-release).
+
+Next, upload the runtime config. **Note:** The runtime config applies to all VMS managed by BOSH, and therefore will enable RDP on all Windows VMs.
+      <pre class="terminal"> $ bosh update runtime-config &lt;runtime config filename&gt; </pre>
+
+1. Click `Apply Changes` to deploy the runtime config changes.
+
 1. Obtain the IP address of the Windows cell you would like to connect to from the `Status` tab of the tile.
+
 
 ####Obtain login credentials for your Windows cell.
    - AWS or vSphere: if you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PCF Runtime for Windows tile, the username is `Administrator` and the password is the one you entered. If you did not set the password, it is not possible to obtain the current Administrator password through the IaaS, because the BOSH agent randomized the password.
@@ -107,6 +128,8 @@ Perform the following steps to connect to your Windows cell to run diagnostics:
 
   - **If the Windows is not accessible from your host**, tunnel through the Ops Manager VM. To do this, SSH into the Ops Manager VM with the flag `-L 3389:<Windows Cell IP>:3389`
     and then use IP 127.0.0.1 from your RDP client.
+
+
 
 ###<a id='consul'></a> Consul CLI
 
