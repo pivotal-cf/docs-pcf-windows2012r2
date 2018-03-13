@@ -41,6 +41,25 @@ Perform the following steps to push a .NET app to a Windows cell:
 
 1. Wait for your app to stage and start. If you see an error message, refer to the [Troubleshoot App Errors](#troubleshoot) section of this topic.
 
+###<a id='context-routing'></a>Context Path Routing Support for ASP.NET Apps</a>
+
+ASP.NET developers can host applications under a route path. 
+Within Windows cells, an app cannot have multiple routes pointing to it. 
+If you want to route an app under another app, you need to push that secondary app with the `--no-route` and `--no-start` flags.
+For example, if you would like to route `APP-NAME-TWO` under `APP-NAME-ONE`:
+
+1. Run the following command to push the primary app</br>
+`cf push APP-NAME-ONE`
+
+1. Run the following command to push the secondary app
+`cf push APP-NAME-TWO --no start --no-route`
+
+1. Run the following command to map the route of the secondary app under the primary app
+`cf map-route APP-NAME-TWO DOMAIN --hostname APP-NAME-ONE --path APP-NAME-TWO
+`
+1. Run the following command to start the app
+`cf start`
+
 ##<a id='self-hosted'></a> Push a Self-Hosted App
 
 Developers can choose to push a self-hosted app instead of using Hostable Web Core. Self-hosted apps combine server code with the app code.
