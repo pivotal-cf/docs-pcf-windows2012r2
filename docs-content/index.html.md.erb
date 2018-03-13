@@ -1,120 +1,64 @@
 ---
-title: Using PAS for Windows 2012R2
+title: Using PCF Runtime for Windows
 owner: Diego
 ---
 
 <strong><%= modified_date %></strong>
 
-<p class='note'><strong>Note:</strong> Elastic Runtime has been renamed Pivotal Application Service.</p>
+This documentation describes how operators install and manage Windows [cells](../concepts/architecture/index.html#diego-cell) in Pivotal Cloud Foundry (PCF) with PCF Runtime for Windows, and how developers push .NET apps to Windows cells. 
 
-This documentation describes how operators install and manage Windows [Diego cells](../concepts/architecture/index.html#diego-cell) in Pivotal Cloud Foundry (PCF) with PAS for Windows 2012R2 and how developers push .NET Framework applications to Windows cells.
+If you are currently using Windows cells deployed by the BOSH Release for Windows or Diego Windows, consult the list below:
 
-Operators can install PAS for Windows 2012R2 on Microsoft Azure, VMware vSphere, Amazon Web Services (AWS), or Google Cloud Platform (GCP).
+* For customers who are using the BOSH Release for Windows, there is no migration path. To upgrade, you must destroy your deployment of Windows cells with the BOSH CLI and then perform a fresh install of the PCF Runtime for Windows tile.
+* For customers who are using Diego Windows, follow the procedures in the <a href="msi-crossgrade.html">Migrating from Diego Windows</a> topic to migrate your applications to Windows cells deployed by the tile.
 
 ## <a id='overview'></a>Overview
 
-Operators who want to enable developers to push .NET Framework applications can deploy Windows-based Diego cells in PCF with the PAS for Windows 2012R2 tile.
+Operators who want to run Windows cells in PCF in order to enable developers to push .NET apps can deploy the PCF Runtime for Windows tile. 
 
-Deploying this tile creates a separate BOSH deployment populated with the Garden-Windows BOSH release, which runs on a Windows cell built from a Windows Server 2012R2 stemcell. This lets PCF deploy Windows-based Diego cells in addition to Linux-based Diego cells.
+Deploying this tile creates a separate BOSH deployment populated with the Garden Windows release, which runs on a Windows cell built from a Windows stemcell.
 
-Once the Windows cell is running and after developers build their applications, they can then specify the `windows2012R2` stack when pushing .NET Framework apps from the command line or PowerShell session. Using the Diego infrastructure, PCF passes the app to the Windows cell in the PAS for Windows 2012R2 deployment. The diagram below illustrates the process.
+Once the Windows cell is running, developers can specify a Windows stack when pushing .NET apps from the command line. PCF passes the app to the Windows cell in the Garden Windows BOSH deployment. The diagram below illustrates the process.
 
 <%= image_tag('windows-overview.png') %>
 
 ## <a id='requirements'></a> Requirements
 
-When configuring the Windows deployment, the minimum resource requirements for each Windows cell are as follows:
+The recommended resource requirements for each Windows cell deployed by PCF Runtime for Windows are as follows:
 
-- Disk size: 64&nbsp;GB
-- Memory: 16&nbsp;GB
-- Number of CPUs: 4
+- Disk size: 64 GB
+- Memory: 16 GB
+- CPUs: 4  
 
-By design, PAS for Windows 2012R2 only supports deployments based on Windows Server 2012R2.
-
-Due to Microsoft's licensing requirements, operators must either bring their own licensed copies of Windows Server (for on-premise deployments) or pay the surcharges associated with Windows Server licensing determined by the IaaS provider on Azure, AWS, and GCP.
-
-
-## <a id='understand'></a>Understanding PAS for Windows 2012R2 ##
+## <a id='understand'></a>Understanding PCF Runtime for Windows ##
 
 * <a href="understand-windows.html" class="subnav">Understanding Windows Cells</a>
 
 * <a href="windows-security.html" class="subnav">Understanding Stemcell Security</a>
 
-## <a id='install'></a>Installing PAS for Windows 2012R2 ##
+* <a href="about-windows-stemcells.html" class="subnav">About Windows Stemcells</a>
 
-* <a href="./about-windows-stemcells.html">Using Windows Stemcells</a>
-* <a href="./deploy-windows.html" class="subnav">Deploying PAS for Windows 2012R2</a>
+## <a id='install'></a>Installing PCF Runtime for Windows ##
+
+* <a href="./deploy-windows.html" class="subnav">Deploying PCF Runtime for Windows</a>
+* <a href="./msi-crossgrade.html" class="subnav">Migrating from Diego Windows</a>
 
 ## <a id="managing"></a>Managing Windows Cells
 
 * <a href="./upgrade-windows.html" class="subnav">Upgrading Windows Cells</a>
 
-* <a href="./configure-kms.html" class="subnav">Configuring a KMS Host</a>
-
 * <a href="./windows-troubleshooting.html" class="subnav">Troubleshooting Windows Cells</a>
-
 
 ## <a id='dev'></a>Developing on Windows Cells
 
-* <a href="push-windows-apps.html" class="subnav">Deploying .NET Framework Apps to Windows Cells</a>
+* <a href="push-windows-apps.html" class="subnav">Deploying .NET Apps to Windows Cells</a>
+
+## <a id='rotate'></a>Rotating Credentials
+
+The Elastic Runtime tile handles all of the credentials for PCF Runtime for Windows. 
+
+To rotate your credentials in PCF Runtime for Windows, re-deploy Elastic Runtime and PCF Runtime for Windows by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**. 
 
 
-## <a id='limitations'></a>Limitations
 
-Deployments of Windows Diego Cells with PAS for Windows 2012R2 have the following limitations:
-
-* Because of the process management characteristics of Windows Server 2012R2, Windows cells can host a maximum of 40 app instances per cell. Operators should take this density constraint into account when planning the sizes of their PAS for Windows 2012R2 deployments, in addition to CPU, disk, and memory needs.
-
-* The following Cloud Foundry features are not supported by PAS for Windows 2012R2:
-
-  - Diego SSH, i.e. the `cf ssh` command. This is due to limitations of the inherent file system isolation characteristics of Windows Server 2012R2.
-  - Volume services. For mounting SMB shares, developers should access SMB volumes from their applications directly.
-  - Container-to-container networking. The IronFrame library that provides container-like features on Windows Server 2012R2 does not support container networking. IronFrame binds virtual container ports to the host.
-
-
-* The following Windows technologies are not supported by PAS for Windows 2012R2:
-
-  - Active Directory Domain Services, i.e. joining Windows cells to an Active Directory domain.
-  - Integrated Windows Authentication. Instead, operators should deploy Active Directory Federation Services and the Pivotal SSO tile to enable OAuth-based authentication.
-
-* You cannot push Docker or other OCI-compatible images to Windows 2012R2 cells.
-
-Except for the inability to host OCI-compatible images, [PAS for Windows](../windows/index.html) does not have any of the limitations above.
-
-## <a id='issues'></a>Known Issues
-
-PAS for Windows 2012R2 has the following known issues:
-
-* In the PAS for Windows 2012R2 tile **Credentials** tab, the `vcap` credentials that appear when you click **VM Credentials** > **Link to Credential** do not apply to Windows cells, since they do not yet have a vcap user.
-
-* Under **VM Options** > **Manage Administrator Password** > **Set the password**, setting the `Administrator` user password has the following issues:
-
-  - For Azure-hosted deployments: Setting the password directly does not yet work. All passwords for the user called `Administrator` will be randomized by default. Please use the following workarounds to access the VM directly:
-
-      - Create a user in the Azure cloud management console.
-      - Use the **Enable SSH** feature.
-
-
-  - For GCP-hosted deployments: Setting the password directly does not yet work. Please use the following workarounds to access the VM:
-
-      - Create a user in the GCP cloud management console.
-      - Use the **Enable SSH** feature.
-
-      - For AWS and vSphere deployments: You can set a password for the user called `Administrator`, but the password must be 8-14 characters and is limited to letters, numbers, and the `!` character, which is the only working special character.
-
-      - For all IaaSes, for stemcell versions 1200.5 and later, the password for the user called `Administrator` is randomized by default to provide additional security in production settings.
-
-* The controls in the **Advanced Features** pane have no effect.
-
-* In the **Resource Config** pane, setting VM disk sizes has the following limitations. See the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table for details:
-
-  - AWS: For stemcells earlier than 1200.9, setting disk size value has no effect. VM disks are 30 GB.
-
-  - GCP: Setting the disk size only works for values 50 GB or larger.
-
-  - vSphere: Setting disk size value has no effect. VM disks will match the disk size of the stemcell you create.
-
-* When a PAS for Windows 2012R2 container shuts down, it may leave behind ghost connections and pending transactions that put the app in an inconsistent state. This is due to a known limitation of the IronFrame containerization framework. See the [Container Shutdown](./understand-windows.html#container-shutdown) section for details.
-
-[PAS for Windows](../windows/index.html) does not have any of the above issues.
 

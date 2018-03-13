@@ -5,52 +5,14 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to troubleshoot Windows cells deployed by Pivotal Application Service (PAS) for Windows 2012R2.
+This topic describes how to troubleshoot Windows cells deployed by Pivotal Cloud Foundry (PCF) Runtime for Windows.
 
-##<a id='log-types'></a> Windows Cell Log Types
-
-Windows cells generate two types of logs:
-
-* **BOSH job logs**, such as `rep_windows` and `consul_agent_windows`. These logs stream to the syslog server configured in the PAS tile **System Logging** pane, along with other PCF component logs. The names of these BOSH job logs correspond to the names of the logs emitted by Linux Diego cells.
-
-* **Windows Event logs**. These stream to the syslog server configured in the PAS for Windows 2012R2 **System Logging** pane and are downloadable through Ops Manager, as described [below](#logs).
-
-##<a id='logs'></a> Access Windows Event Logs
-
-PCF operators can access log messages from Windows Diego cells in two ways:
-
-* Configure PAS for Windows to [send](#syslog) all Windows cell logs to an external syslog server.
-
-* [Download](#download) archived logs from each Windows cell individually.
-
-###<a id='syslog'></a> Send Cell Logs to a Syslog Server
-
-To forward Windows cell log messages to an external syslog server, complete the following steps:
-
-1. Navigate to the Ops Manager Installation Dashboard.
-
-1. Click the **PAS for Windows 2012R2** tile.
-
-1. Under the **Settings** tab, select the **System Logging** pane.
-  <%= image_tag("win-syslog-config.png") %>
-
-1. Under **Enable Syslog for VM logs?**, click **Enable**
-
-1. Under **Address**, enter the IP address of your syslog server.
-
-1. Under **Port**, enter the port of your syslog server. The typical port for a syslog server is `514`.
-  <p class="note"><strong>Note</strong>: The host must be reachable from the PAS network. Ensure your syslog server listens on external interfaces.</p>
-
-1. Under **Protocol**, select the transport protocol to use when forwarding logs.
-
-1. Click **Save**.
-
-###<a id='download'></a> Download Cell Logs
+##<a id='logs'></a> Retrieve Logs
 
 Perform the following steps to retrieve the logs for the Windows cell:
 
 1. Navigate to the Ops Manager Installation Dashboard.
-1. Click the **PAS for Windows 2012R2** tile.
+1. Click the **PCF Runtime for Windows** tile.
 1. Click the **Status** tab.
 1. Under the **Logs** column, click the download icon for the Windows cell you want to retrieve logs from.
 1. Click the **Logs** tab.
@@ -61,52 +23,134 @@ Perform the following steps to retrieve the logs for the Windows cell:
 	* `/metron_agent_windows/`
 	* `/rep_windows/`
 
-##<a id='rdp'></a> Connect to a Windows Cell
+Hakim is a diagnostic tool that reveals common configuration issues with Windows cells. Because PCF Runtime for Windows runs Hakim as a BOSH job, the logs may include Hakim error messages. Refer to the [section](#hakim-error) below for a list of Hakim error messages and their possible solutions.
+
+###<a id='hakim-error'></a> Hakim Error Messages
+
+**Processes**
+
+`The following processes are not running`
+
+This usually indicates a failed deployment. Try [redeploying](deploy-windows.html) the PCF Runtime for Windows tile.
+
+<hr>
+
+**NTP**
+
+`There was an error detecting ntp synchronization on your machine.
+An accurate system clock is essential for internal Cloud Foundry metric reports.
+Please configure your NTP settings, if not already done.
+We recommend that your firewall have outbound rules set for UDP on port 123.
+In addition, ensure that your 'DnsCache' service is running`
+
+If NTP is not configured, clock skew with other PCF components can occur. Clock skew can result in odd errors, such as not receiving any metrics from apps running on the affected machine. Ensure that you are using the same NTP server on your Windows cell as the rest of your PCF deployment.
+
+<hr>
+
+**Firewall** 
+
+`Windows firewall service is not enabled. The Windows firewall is required in order to enforce Application Security Group rules. Running without the firewall is possible, but strongly not recommended.`
+
+ Garden Windows enforces PCF security group settings for apps running on the Windows cell through the Windows firewall. Apps can run without this, but security groups do not work correctly and apps have unrestricted network access. 
+
+ To resolve this error, enable the Windows firewall. Perform the following steps in your RDP session to access the Windows firewall configuration:
+
+ 1. Open the Server Manager from the task bar.
+ 1. Click **Tools** in the upper right and select **Windows Firewall with Advanced Security**.
+ 1. Configure and enable the Windows firewall.
+
+ <hr>
+
+**Fair Share**
+
+`Fair Share CPU Scheduling must be disabled`
+
+You must disable Fair Share CPU scheduling for your Windows cell to function properly. Perform the following steps in your RDP session:
+
+1. Open the Registry Editor at `C:\Windows\regedit.exe`. 
+1. Navigate to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Quota System\`.
+1. Double-click the `EnableCpuQuota` value.
+1. Change the **Value data** from `1` to `0`.
+1. Click **OK**.
+
+<hr>
+
+**Container**
+
+`Failed to create container`
+
+This usually indicates an issue with the Windows containerization service. Contact [Pivotal Support](https://support.pivotal.io/) and provide the full output of this error.
+
+<hr>
+
+**Consul**
+
+`Failed to resolve consul host`
+
+This usually indicates interference with DNS resolution on your Windows cell. To resolve this error, perform the following steps in your RDP session to set `127.0.0.1` as the primary DNS server for the active network adapter:
+
+1. Open the Control Panel.
+1. Click **Network and Internet**
+1. Click **Network and Sharing Center**.
+1. Click **Change adapter settings** on the left.
+1. Double-click your active network adapter.
+1. Click **Properties**.
+1. Select **Internet Protocol Version 4 (TCP/IPv4)**.
+1. Click **Properties**.
+1. Ensure that **Use the following DNS server addresses** is selected and enter `127.0.0.1` for **Preferred DNS server**.
+1. Click **OK**. 
+
+
+
+
+
+##<a id='rdp'></a> Connect to the Windows Cell
 
 Perform the following steps to connect to your Windows cell to run diagnostics:
 
 1. Download and install a Remote Desktop Protocol (RDP) client.
 	* For Mac OS X, download the Microsoft Remote Desktop app from the [Mac App Store](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12).
 	* For Windows, download the Microsoft Remote Desktop app from [Microsoft](https://www.microsoft.com/en-us/store/p/microsoft-remote-desktop/9wzdncrfj3ps).
-	* For Linux/UNIX, download an RDP client like [rdesktop](http://www.rdesktop.org/).
+	* For Linux/UNIX, download a RDP client like [rdesktop](http://www.rdesktop.org/).
 
-1. Select the **Enable Remote Desktop Protocol** checkbox under `VM Options` in the tile.
-   <%= image_tag('vm-options.png') %>
-  
-1. Obtain the IP address of the Windows cell you would like to connect to from the `Status` tab of the tile.
+1. Follow the steps in the [Log into BOSH](http://docs.pivotal.io/pivotalcf/customizing/trouble-advanced.html#log-in) section of the <em>Advanced Troubleshooting with the BOSH CLI</em> topic to target and log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
 
-####Obtain login credentials for your Windows cell.
-   - AWS or vSphere: if you chose **Set the password** under **VM Options** > **Manage Administrator Password** when you configured the PCF Runtime for Windows tile, the username is `Administrator` and the password is the one you entered. If you did not set the password, it is not possible to obtain the current Administrator password through the IaaS, because the BOSH agent randomized the password.
-   - GCP: follow the [linked instructions](https://cloud.google.com/compute/docs/instances/windows/connecting-to-windows-instance) for obtaining credentials.
-   - Azure: follow the [linked instructions](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/connect-logon) for obtaining credentials.
+1. Retrieve the IP address of your Windows cell:
+	<pre class="terminal">
+	$ bosh vms garden-windows
+	Acting as user 'director' on deployment 'garden-windows' on 'p-bosh-1170e9b438cb29ff7c63'
+	Director task 274
+	Task 274 done
+	+-------------------------------------------------------+---------+---------+---------+--------------+
+	| VM                                                    | State   | AZ      | VM Type | IPs          |
+	+-------------------------------------------------------+---------+---------+---------+--------------+
+	| cell_windows/0 (03e221b3-3222-5e1e-eedd-b92221ff88e1) | running | default | xlarge  | <%= vars.example_ip_2 %> |
+	+-------------------------------------------------------+---------+---------+---------+--------------+
 
-####Establish an RDP connection
-  - Open your RDP client. The examples below use the Microsoft Remote Desktop app.
+	VMs total: 1
+	</pre>
 
-  - Click **New** and enter your connection information:
+1. Retrieve the Administrator password for your Windows cell. On vSphere, this is the value of `WINDOWS_PASSWORD` in the `consumer-vars.yml` file you used to previously build the stemcell.
+
+1. Open your RDP client. The examples below use the Microsoft Remote Desktop app.
+
+1. Click **New** and enter your connection information:
 	<%= image_tag('rdp-connect.png') %>
 	* **Connection name**: Enter a name for this connection.
 	* **PC name**: Enter the IP address of your Windows cell.
-	* **User name**: Enter the appropriate username.
-	* **Password**: Enter the password of your Windows cell that you created.
+	* **User name**: Enter `Administrator`.
+	* **Password**: Enter the password of your Windows cell that you obtained above.
 
 1. To mount a directory on your local machine as a drive in the Windows cell, perform the following steps:
 	1. From the same **Edit Remote Desktops** window as above, click **Redirection**.
-	1. Click the plus icon at the bottom left.
+	1. Click the plus icon at the bottom left. 
 	<%= image_tag('rdp-redirection.png') %>
-	1. For **Name**, enter the name of the drive as it will appear in the Windows cell. For **Path**, enter the path of the local directory.
+	1. For **Name**, enter the name of the drive as it will appear in the Windows cell. For **Path**, enter the path of the local directory. 
 	1. Click **OK**.
 
 1. Close the **Edit Remote Desktops** window and double-click the newly added connection under **My Desktops** to open a RDP connection to the Windows cell.
 
 1. In the RDP session, you can use the [Consul CLI](#consul) to diagnose problems with your Windows cell.
-
-**Notes:**
-
-  - **For vSphere**, it is also possible to connect to your windows cell using the vCenter console once the Administrator password has been set.
-
-  - **If the Windows is not accessible from your host**, tunnel through the Ops Manager VM. To do this, SSH into the Ops Manager VM with the flag `-L 3389:<Windows Cell IP>:3389`
-    and then use IP 127.0.0.1 from your RDP client.
 
 ###<a id='consul'></a> Consul CLI
 
@@ -115,7 +159,7 @@ Perform the following steps to use the Consul CLI on your Windows cell to diagno
 1. In your RDP session, open a PowerShell window.
 1. Change into the directory that contains the Consul CLI binary:
 	<pre class="terminal">
-	PS C:\Users\Administrator> cd C:\var\vcap\packages\consul-windows\bin\
+	PS C:\Users\Administrator> cd C:\var\vcap\packages\consul-windows\bin\ 
 	</pre>
 1. Use the Consul CLI to list the members of your Consul cluster:
 	<pre class="terminal">

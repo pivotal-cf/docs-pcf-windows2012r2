@@ -1,6 +1,6 @@
 ---
 book_repo: docs-book
-layout_repo: pivotal-cf/docs-layout-repo
+layout_repo: docs-layout
 
 broken_link_exclusions: iefix|arrowhead
 repo_link_enabled: true

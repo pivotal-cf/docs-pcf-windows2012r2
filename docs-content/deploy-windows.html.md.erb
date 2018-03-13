@@ -1,143 +1,53 @@
 ---
-title: Deploying PAS for Windows 2012R2 
+title: Deploying PCF Runtime for Windows 
 owner: Greenhouse
 ---
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to install and configure the Pivotal Application Service (PAS) for Windows 2012R2 tile. The PAS for Windows 2012R2 tile installs Windows cells on your Pivotal Cloud Foundry (PCF) deployment.
+This topic describes how to install and configure the Pivotal Cloud Foundry (PCF) Runtime for Windows v1.9 tile. The PCF Runtime for Windows tile installs Windows cells on your PCF deployment.
 
 ## <a id='reqs'></a> Requirements
 
-To install the PAS for Windows 2012R2 v1.12 tile, you must have Ops Manager v1.12.0 or later and Elastic Runtime v1.12.0 or later deployed to vSphere, Amazon Web Services (AWS), Google Cloud Platform (GCP), or Azure.
+To install the PCF Runtime for Windows v1.9 tile, you must have Ops Manager v1.9.2 or later and Elastic Runtime v1.9.0 or later deployed to vSphere.
 
 ## <a id='ert'></a> Step 1: Confirm Elastic Runtime Settings
 
-There are two settings in the Elastic Runtime tile that affect the Windows cells installed by the PAS for Windows 2012R2 tile. Configure these settings as desired:
+There are two settings in the Elastic Runtime tile that affect the Windows cells installed by the PCF Runtime for Windows tile. Configure these settings as desired:
 
 * In the **Networking** section, if you select the **Disable SSL certificate verification for this environment** checkbox, SSL certificate verification is disabled for Windows cells.
 * In the **System Logging** section, if you configure an external syslog aggregator, logs are drained from Windows cells as well as non-Windows cells.
 
 ##<a id='install'></a> Step 2: Install the Tile
 
-1. Download the product file from the **Pivotal Application Service for Windows 2012R2** section of [Pivotal Network](https://network.pivotal.io/products/p-windows-runtime).
+1. Download the product file from the **Pivotal Cloud Foundry Runtime for Windows** section of [Pivotal Network](https://network.pivotal.io/products/runtime-for-windows).
 
 1. Navigate to the Ops Manager Installation Dashboard and click **Import a Product** to upload the product file. 
 
-1. Click **+** under the uploaded **PAS for Windows 2012R2** tile to add it to your staging area.
+1. Click **+** under the uploaded **PCF Windows Runtime** tile to add it to your staging area.
 
 ##<a id='config'></a> Step 3: Configure and Deploy the Tile
 
-1. Click the newly added **PAS for Windows 2012R2** tile.
+1. Click the newly added **PCF Windows Runtime** tile.
 
-    <%= image_tag('pcf-windows-tile-orange-1-12.png') %>
-
-1. Click **Assign AZs and Networks** or **Assign Networks**. The name of the section varies depending on your IaaS.
-
-1. Assign your AZs and networks and click **Save**.
-
-1. Click **VM Options**. 
-
-    <%= image_tag('vm-options.png') %>
-
-1. Specify how you would like to manage the administrator password for your Windows VMs. The default option is to **Use random administrator password**.
-1. (Optional) Select the **BETA: Enable BOSH-native SSH support on all VMs** checkbox to start the Microsoft beta port of the OpenSSH daemon on port 22 on all VMs. Users will be able to SSH onto Windows VMs with the `bosh ssh` command, and enter a CMD terminal as an administrator user. They can then run `powershell.exe` to start a PowerShell session.
-1. (Optional) Select the **Enable Remote Desktop Protocol** checkbox to enable RDP connections to the Windows Cells.
-
-    <p class="note"><strong>Note</strong>: This feature is beta and not considered production-ready.</p>
-
-1. (Optional) If you want all VMs to support connection through Remote Desktop Protocol (RDP), click **Enable Remote Desktop Protocol**. 
-
-1. (Optional) If you want to configure a Key Management Service (KMS) that your volume-licensed Windows cell can register with, perform the following steps:
-    1. Click **Enable**
-    2. For the **Host** field, enter the KMS hostname.
-    3. For the **Port** field, enter the port number. The default port number is `1688`.
-
-    ![The enable KMS text fields: host and port](enable-kms.png)
-
-1. (Optional) If you want your PAS for Windows 2012R2 application workloads to be deployed to an isolation segment, perform the steps in [Assign a Tile to an Isolation Segment](#assign-isolation) below.
+    <%= image_tag('pcf-windows-tile-orange.png') %>
 
 1. (Optional) If an antivirus scanner runs on your VMs, configure the scanner to let the BOSH agent download and uncompress files. See [Configure Antivirus for Windows Cells](#antivirus) for details.
 
-1. (Optional) To configure Windows cells to send Windows Event logs to an external syslog server, click **System Logging** and perform the steps in the [Send Cell Logs to a Syslog Server](./windows-troubleshooting.html#syslog) section.
-
-1. Click **Errands**. Pivotal recommends that you set the **Install HWC Buildpack Errand** to **On**. This ensures that you receive the most up-to-date HWC Buildpack.
-	
-    <%= image_tag('errands-hwc.png') %>
-
-1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed. Ensure that all VMs have disk sizes that match the possible sizes listed in the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table. If you are deploying PAS for Windows 2012R2 on Azure, see the [Configure Resources](./azure-light-stemcell.html#req) section of the *Deploying the Azure Light Stemcell* topic.
+1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed.
 
 1. Click **Save**.
 
-1. Retrieve the stemcell by following the steps below for your IaaS.
-    * For vSphere, you must create your own stemcell. For more information, see either [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand).
-    * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows)** page of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server). For more information, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
+1. Click **Stemcell**. Record the stemcell version number required by the tile. 
+    <%= image_tag('pcf-windows-tile-stemcell.png') %>
 
-1. Return to the Ops Manager Installation Dashboard and click **Stemcell Library**.
-
-1. Click **Import Stemcell** to import the stemcell you retrieved.
-
-1. When prompted, enable the Ops Manager product checkbox to stage your stemcell.
-
-1. Click **Apply Stemcell to Products**.
-
-1. Click the **Installation Dashboard** link to return to the Installation Dashboard.
-
-1. Click **Apply Changes** to install the PAS for Windows 2012R2 tile.
-
-##<a id='copy'></a> Step 4: (Optional) Create More Tiles
-
-If you want to run Windows cells in multiple isolation segments, you must create and configure additional PAS for Windows 2012R2 tiles. See [Windows Cells in Isolation Segments](#isolation) below for how to do this.
-
-##<a id='isolation'></a> Windows Cells in Isolation Segments
-
-Isolation segments are compartmentalized resource pools for Diego cells. The cells in one isolation segment share routing, computing, and logging resources with other cells in the same segment, and do not use resources from other isolation segments.
-
-To run Windows cells in multiple isolation segments, you need to create and install multiple PAS for Windows 2012R2 tiles and configure each to run in a different isolation segment.
-
-If the isolation segments do not already exist in the Cloud Controller Database (CCDB), you need to create them there.
-
-See [Replicate a Tile](#replicate) for how to create multiple copies of the PAS for Windows 2012R2 tile.
-
-See [Assign a Tile to an Isolation Segment](#assign-isolation) for how to associate a PAS for Windows 2012R2 tile with an isolation segment, so that its cells run in that segment. 
-
-See the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic for how to add an isolation segment to the CCDB.
-
-###<a id='replicate'></a> Replicate a Tile
-
-To make multiple copies of the **PAS for Windows 2012R2** tile that you can assign to different isolation segments, use the Replicator tool as follows:
-
-1. Download the Replicator tool from the **PAS for Windows 2012R2** section of [Pivotal Network](https://network.pivotal.io/products/p-windows-runtime).
-
-1. Navigate to the directory where you downloaded the Replicator tool.
-
-1. Replicate the tile:
-    <pre class="terminal">
-    ./replicator \
-        -name "YOUR-NAME" \
-        -path /PATH/TO/ORIGINAL.pivotal \
-        -output /PATH/TO/COPY.pivotal
-    </pre>
-
-    Replace the values above with the following:
-    * `YOUR-NAME`: Provide a unique name for the new PAS for Windows tile. The name must be ten characters or less and only contain alphanumeric characters, dashes, underscores, and spaces.
-    * `/PATH/TO/ORIGINAL`: Provide the absolute path to the original PAS for Windows tile you downloaded from Pivotal Network.
-    * `/PATH/TO/COPY`: Provide the absolute path for the copy of the PAS for Windows tile that the Replicator tool produces.
-
-1. Install and configure the Windows isolation segment, using the new `.pivotal` file and following the procedures in this topic, starting with the **Import a Product** step of [Step 2: Install the Tile](#install).
-
-###<a id='assign-isolation'></a> Assign a Tile to an Isolation Segment
-
-To assign a PAS for Windows 2012R2 tile to an isolation segment, perform the following steps:
-
-1. Open the **Application Containers** pane.
-
-    <%= image_tag('app_containers_segment_name.png') %>
-1. Under **Segment Name**, enter the name for the isolation segment to associate the tile with. If you are creating a new isolation segment, ensure that this name is unique across your PCF deployment.
+1. Build your own stemcell by following the instructions in [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand).
 
 1. Click **Save**.
 
-1. If you are creating a new isolation segment, follow the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to add the isolation segment to the CCDB.
+1. Return to the Ops Manager Installation Dashboard and click **Apply Changes** to install the PCF Runtime for Windows tile.
+
+After you have deployed the PCF Runtime for Windows tile, developers can then push .NET applications to Windows cells. For more information, see the [Deploying .NET Apps to Windows Cells](push-windows-apps.html) topic.
 
 ##<a id='antivirus'></a> Configure Antivirus for Windows Cells
 

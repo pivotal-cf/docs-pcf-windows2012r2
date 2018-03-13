@@ -11,7 +11,7 @@ This topic provides a description of how Windows cells work in Pivotal Cloud Fou
 
 App instances in PCF run inside containers. [Garden](../concepts/architecture/garden.html) is the API that creates and manages these containers, and Garden Windows implements Garden on Windows.
 
-By deploying the [PAS for Windows 2012R2](deploy-windows.html) tile, operators create a Windows [cell](../concepts/architecture/index.html#diego-cell) from a [stemcell](https://bosh.io/docs/stemcell.html) that contains the Windows Server 2012 operating system. Because Windows does not natively support Linux-style containers, Garden Windows uses an open-source library called IronFrame to implement containerization on Windows. IronFrame uses features of the Windows kernel to isolate resources that would otherwise be shared, creating containers comparable to those that exist on Linux.
+By deploying the [PCF Runtime for Windows](deploy-windows.html) tile, operators create a Windows [cell](../concepts/architecture/index.html#diego-cell) from a [stemcell](https://bosh.io/docs/stemcell.html) that contains the Windows Server 2012 operating system. Because Windows does not natively support Linux-style containers, Garden Windows uses an open-source library called IronFrame to implement containerization on Windows. IronFrame uses features of the Windows kernel to isolate resources that would otherwise be shared, creating containers comparable to those that exist on Linux.
 
 A Windows cell includes the following components:
 
@@ -52,27 +52,3 @@ Apps launched inside a Garden Windows container bind directly to the external IP
 Garden Windows uses [job objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms684161.aspx) to enforce limits on memory usage by an app inside a container. A job object is a Windows kernel object that enables the control of multiple processes as a single group. Garden Windows assigns the processes inside a container to a job object and sets an upper limit on memory utilization by this job object, which is enforced by the kernel. 
 
 Additionally, an IronFrame component called the Guard helps enforce memory limits. The Guard polls for app memory usage and ensures that no app has mapped more memory than allowed. If an app exceeds its memory limit, the Guard kills the job object. If a process attempts to escape a job object, the Guard stops this behavior and kills the process if necessary.
-
-##<a id='container-shutdown'></a> Container Shutdown
-
-When the Garden Windows server directs a PAS for Windows 2012R2 cell to shut down one of its containers, the cell destroys the container as follows:
-
-1. Runs the `TerminateProcess` kernel32 syscall recursively, to terminate container child processes and finally the parent process. 
-
-1. Stops the container Guard process.
-
-1. Releases ports allocated to the container.
-
-1. Deletes firewall rules for NetOut.
-
-1. For mounted directories bound to the container:
-  - Deletes local symlinks.
-  - On the directory source VM, deletes access control lists (ACLs) for the container user.
-
-1. Deletes the container user disk quota and container directory on the cell.
-
-1. Deletes the container user account on the cell.
-
-Due to a known limitation of the IronFrame containerization framework, terminating processes with the `TerminateProcess` kernel32 syscall may leave behind ghost connections and pending transactions that put the app in an inconsistent state.  See the [Knowledge Base](https://discuss.pivotal.io/hc/en-us/articles/115005092734) for more information on how .NET apps shut down on PCF Windows cells.
-
-Shutdown requests can come from `cf delete` or `cf scale` commands, or from the Diego system [balancing apps](https://docs.pivotal.io/pivotalcf/concepts/diego/diego-auction.html).
