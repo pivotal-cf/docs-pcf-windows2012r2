@@ -42,19 +42,25 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 
 1. Specify how you would like to manage the administrator password for your Windows VMs. The default option is to **Use the Windows default password**.
 1. (Optional) Select the **BETA: Enable BOSH-native SSH support on all VMs** checkbox to start the Microsoft beta port of the OpenSSH daemon on port 22 on all VMs. Users will be able to SSH onto Windows VMs with the `bosh ssh` command, and enter a CMD terminal as an administrator user. They can then run `powershell.exe` to start a PowerShell session.
+
     <p class="note"><strong>Note</strong>: This feature is beta and not considered production-ready.</p>
 
-1. (Optional) If you want your PCF Runtime for Windows application workloads to be deployed to an isolation segment, perform the steps in [Assign a Tile to an Isolation Segment](#assign-isolation) below.
+1. (Optional) If you want your PCF Runtime for Windows application workloads to be deployed to an isolation segment, perform the following steps:
 
-1. (Optional) If an antivirus scanner runs on your VMs, configure the scanner to let the BOSH agent download and uncompress files. See [Configure Antivirus for Windows Cells](#antivirus) for details.
+    1. Click **Application Containers**.
 
-1. (Optional) To configure Windows cells to send Windows Event logs to an external syslog server, click **System Logging** and perform the steps in the [Send Cell Logs to a Syslog Server](./windows-troubleshooting.html#syslog) section of the _Troubleshooting Windows Cells_ topic.
+        <%= image_tag('app_containers_segment_name.png') %>
+    1. Under **Segment Name**, enter a name for your isolation segment. Ensure that this name is unique across your PCF deployment.
+
+    1. Click **Save**.
+    
+    1. Perform the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to create the isolation segment in the Cloud Controller Database (CCDB).
 
 1. Click **Errands**. Pivotal recommends that you set the **Install HWC Buildpack Errand** to **On**. This ensures that you receive the most up-to-date HWC Buildpack.
 	
     <%= image_tag('errands-hwc.png') %>
 
-1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed. Ensure that all VMs have disk sizes that match the possible sizes listed in the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table. If you are deploying PCF Runtime for Windows on Azure, see the [Configure Resources](./azure-light-stemcell.html#req) section of the *Deploying the Azure Light Stemcell* topic.
+1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed.
 
 1. Click **Save**.
 
@@ -63,34 +69,18 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
     <%= image_tag('pcf-windows-tile-stemcell.png') %>
 
 1. Retrieve the stemcell by following the steps below for your IaaS.
-    * For vSphere, you must create your own stemcell. For more information, see [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html).
-    * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows)** page of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server). For more information, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
+    * For vSphere, you must create your own stemcell. See either [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand) for more information.
+    * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows Server)** section of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
 
 1. Click **Save**.
 
 1. Return to the Ops Manager Installation Dashboard and click **Apply Changes** to install the PCF Runtime for Windows tile.
 
-##<a id='copy'></a> Step 4: (Optional) Create More Tiles
+After you have deployed the PCF Runtime for Windows tile, developers can then push .NET applications to Windows cells. For more information, see the [Deploying .NET Apps to Windows Cells](push-windows-apps.html) topic.
 
-If you want to run Windows cells in multiple isolation segments, you must create and configure additional PCF Runtime for Windows tiles. See [Windows Cells in Isolation Segments](#isolation) below for how to do this.
+##<a id='copy'></a> Step 4: (Optional) Copy the Tile
 
-##<a id='isolation'></a> Windows Cells in Isolation Segments
-
-Isolation segments are compartmentalized resource pools for Diego cells. The cells in one isolation segment share routing, computing, and logging resources with other cells in the same segment, and don't use resources from other isolation segments.
-
-To run Windows cells in multiple isolation segments, you need to create and install multiple PCF Runtime for Windows tiles and configure each to run in a different isolation segment.
-
-If the isolation segments do not already exist in the Cloud Controller Database (CCDB), you need to create them there.
-
-See [Replicate a Tile](#replicate) for how to create multiple copies of the PCF Runtime for Windows tile.
-
-See [Assign a Tile to an Isolation Segment](#assign-isolation) for how to associate a PCF Runtime for Windows tile with an isolation segment, so that its cells run in that segment. 
-
-See the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic for how to add an isolation segment to the CCDB.
-
-###<a id='replicate'></a> Replicate a Tile
-
-To make multiple copies of the **PCF Runtime for Windows** tile that you can assign to different isolation segments, use the Replicator tool as follows:
+If you want to create multiple isolation segments for the Windows tile, perform the following steps to copy the **PCF Runtime for Windows** tile with the Replicator tool:
 
 1. Download the Replicator tool from the **Pivotal Cloud Foundry Runtime for Windows** section of [Pivotal Network](https://network.pivotal.io/products/p-windows-runtime).
 
@@ -105,31 +95,10 @@ To make multiple copies of the **PCF Runtime for Windows** tile that you can ass
     </pre>
 
     Replace the values above with the following:
-    * `YOUR-NAME`: Provide a unique name for the new PCF Runtime for Windows tile. The name must be ten characters or less in length and only contain alphanumeric characters, dashes, underscores, and spaces.
+    * `YOUR-NAME`: Provide a unique name for the new PCF Runtime for Windows tile. The name must be ten characters or less and only contain alphanumeric characters, dashes, underscores, and spaces.
     * `/PATH/TO/ORIGINAL`: Provide the absolute path to the original PCF Runtime for Windows tile you downloaded from Pivotal Network.
     * `/PATH/TO/COPY`: Provide the absolute path for the copy of the PCF Runtime for Windows tile that the Replicator tool produces.
 
-1. Install and configure the Windows isolation segment, using the new `.pivotal` file and following the procedures in this topic, starting with the **Import a Product** step of [Step 2: Install the Tile](#install).
+1. Follow the procedures in this topic using the new `.pivotal` file, starting with [Step 1](#ert).
 
-###<a id='assign-isolation'></a> Assign a Tile to an Isolation Segment
 
-To assign a PCF Runtime for Windows tile to an isolation segment, perform the following steps:
-
-1. Open the **Application Containers** pane.
-
-    <%= image_tag('app_containers_segment_name.png') %>
-1. Under **Segment Name**, enter the name for the isolation segment to associate the tile with. If you are creating a new isolation segment, ensure that this name is unique across your PCF deployment.
-
-1. Click **Save**.
-
-1. If you are creating a new isolation segment, follow the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to add the isolation segment to the CCDB.
-
-##<a id='antivirus'></a> Configure Antivirus for Windows Cells
-
-Diego cell VMs routinely download and uncompress files, while antivirus scanners scan files once they are downloaded or uncompressed. When an antivirus scanner program runs in a directory that BOSH is actively downloading or compressing into, scanner actions can block BOSH processes and cause hard-to-debug “Access is denied” errors.
-
-To prevent these errors, configure your antivirus scanner to disable **on-access scanning** for the following directories on your Windows cell:
-
-* `C:\bosh`
-* `C:\var\vcap`
-* `C:\containerizer`

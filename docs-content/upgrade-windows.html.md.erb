@@ -5,37 +5,28 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to upgrade and rotate the credentials for the PCF Runtime for Windows tile, update the Windows stemcell, and upgrade your Windows apps.
-
-
-##<a id='when'></a> When to Upgrade
-
-You must upgrade the PCF Runtime for Windows tile at the same time or immediately after you upgrade the Elastic Runtime tile.
-
-Unless otherwise noted, any minor version of PCF Runtime for Windows is compatible with the same minor version of Elastic Runtime. For example, any 1.12.x version of PCF Runtime for Windows works with any 1.12.x version of Elastic Runtime.
+This topic describes how to upgrade the PCF Runtime for Windows tile and update the Windows stemcell.
 
 ##<a id='upgrade-tile'></a> Upgrade PCF Runtime for Windows
 
-To upgrade PCF Runtime for Windows:
+The latest versions of your existing products appear in the **Ops Manager Installation Dashboard**. Upgrade your product to the latest version by following these instructions.
 
-1. Follow the instructions [Upgrading PCF Products](../customizing/upgrading-products.html#other-products) with the latest PCF Runtime for Windows product download from [Pivotal Network](https://network.pivotal.io/products/p-windows-runtime).
+1. Navigate to the **Ops Manager Installation Dashboard**.
+
+1. Click on the green download icon on the left-hand side of the screen to locate and download the product version to which you want to upgrade.
+
+1. When the download completes, click **Apply Changes**.
 
 1. If necessary, configure the product. For more information about configuring PCF Runtime for Windows, see the [Deploying PCF Runtime for Windows](./deploy-windows.html) topic.
 
 1. Locate the **Pending Changes** section on the right-hand side of the screen and click **Apply Changes**.
-
-## <a id='rotate'></a>Rotate PCF Runtime for Windows Credentials
-
-The Elastic Runtime tile handles all of the credentials for PCF Runtime for Windows.
-
-To rotate your credentials in PCF Runtime for Windows, re-deploy Elastic Runtime and PCF Runtime for Windows by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**.
 
 ##<a id='upgrade-stemcell'></a> Upgrade the Windows Stemcell
 
 1. Navigate to the **Ops Manager Installation Dashboard**.
 
 1. Retrieve the stemcell by following the steps below for your IaaS:
-    * For vSphere, you must build your own stemcell. See [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand) in GitHub for more information.
+    * For vSphere, you must [build your own stemcell](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/blob/master/create-manual-vsphere-stemcells.md).
     * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows Server)** section of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
 
 1. Click the **PCF Runtime for Windows** tile.
@@ -50,4 +41,23 @@ To rotate your credentials in PCF Runtime for Windows, re-deploy Elastic Runtime
 
 1. Click **Apply Changes**.
 
-For more information about Windows stemcells, see [Using Windows Stemcells](./about-windows-stemcells.html).
+##<a id='upgrade-apps'></a> Upgrade Windows Apps
+
+Consult the following list of scenarios for instructions about upgrading your apps.
+
+* If your .NET app was previously pushed with the `binary_buildback` and you are relying on the <code>WebAppServer.exe</code> you must push with the <code>hwc\_buildpack</code>:
+
+    <pre class="terminal">$ cf push APP-NAME -s windows2012R2 -b hwc_buildpack</pre>
+    By passing `windows2012R2` with the `-s` flag, you instruct PCF to run the app in the Windows cell. If you are not pushing your app from its directory, add the `-p` flag to specify the path to the directory that contains the app.
+<br><br>
+An app with the <code>hwc\_buildpack</code> should not be pushed with the <code>-c</code> flag.
+<br><br>
+If you try to <code>cf restage</code>, your app will fail to restage because you cannot switch to the <code>hwc\_buildpack</code> using <code>cf restage</code>.
+
+* If you have a binary app you must push with the <code>-c</code> flag:
+
+    <pre class="terminal">
+    $ cf push APP-NAME -s windows2012R2 -b binary_buildpack -c PATH-TO-BINARY
+    </pre>
+
+* If your app needs a custom start command and requires the <code>WebAppServer.exe</code>, you must update the start command to reflect the path to <code>hwc.exe</code>, which is provided by the HWC buildpack.
