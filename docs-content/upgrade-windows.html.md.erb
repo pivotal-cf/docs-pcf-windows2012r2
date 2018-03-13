@@ -5,43 +5,97 @@ owner: Greenhouse
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to upgrade the PCF Runtime for Windows tile and update the Windows stemcell.
+This topic describes how to upgrade the Windows cells on a Pivotal Cloud Foundry (PCF) deployment. Operators may want to upgrade their Windows cells in response to the following events:
 
-If you are currently using Windows cells deployed by the BOSH Release for Windows or Diego Windows, consult the list below:
+* For deployments that run on Amazon Web Services (AWS), the release of a new Windows stemcell included in the BOSH Release for Windows on [Pivotal Network](http://network.pivotal.io)
+* For deployments that run on vSphere, an update to the Windows Server 2012 operating system 
+* A new release of Garden Windows
 
-* For customers who are using the BOSH Release for Windows, install the PCF Runtime for Windows tile, then destroy your original deployment of Windows cells with the BOSH CLI. The workloads will evacuate the old deployment and migrate to the tile deployment in an automated fashion.
-* For customers who are using Diego Windows, follow the procedures in the <a href="msi-crossgrade.html">Migrating from Diego Windows</a> topic to migrate your applications to Windows cells deployed by the tile.
+##<a id='stemcell'></a> Update the Stemcell
 
-##<a id='upgrade-tile'></a> Upgrade PCF Runtime for Windows
+Perform the following steps to update the stemcell for your Windows cells:
 
-The latest versions of your existing products will appear in the **Ops Manager Installation Dashboard**. Upgrade your product to the latest version by following these instructions.
+1. Retrieve the new stemcell by performing the steps appropriate for your IaaS:
+	* If your deployment runs on AWS, download the new stemcell from the latest BOSH Release for Windows on [Pivotal Network](http://network.pivotal.io).
+	* If your deployment runs on vSphere, ensure that you have followed the procedures in the [Building a Windows Stemcell](build-stemcell.html) topic to create a Concourse pipeline for building stemcells. Navigate to your Concourse pipeline in a browser and kick off a build by selecting **create-stemcell** and clicking the plus sign in the upper right. Concourse uses the newest version of the Windows Server 2012 operating system to build a new stemcell. After several hours, the stemcell appears in the bucket you created in your S3-compatible blobstore.
 
-1. Navigate to the **Ops Manager Installation Dashboard**.
+1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the Advanced Troubleshooting with the BOSH CLI topic to target and log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
 
-1. Locate and download the product version you want to upgrade to by clicking on the green download icon on the left-hand side of the screen.
+1. After you have successfully logged in to your BOSH Director, upload the new stemcell to BOSH:
 
-1. When the download is complete, click **Apply Changes**.
+    <pre class="terminal">
+    $ bosh upload stemcell YOUR-WINDOWS-STEMCELL.tgz
+    </pre>
 
-1. If necessary, configure the product. For more information on configuring PCF Runtime for Windows, see the [Deploying PCF Runtime for Windows](http://docs.pivotal.io/pivotalcf/windows/deploy-windows.html) topic.
+1. If necessary, download the manifest of your `garden-windows` deployment: 
+    <pre class="terminal">
+    $ bosh download manifest garden-windows garden-windows.yml
+    </pre>
 
-1. Locate the **Pending Changes** section on the right-hand side of the screen and click **Apply Changes**.
+1. Set your deployment to `garden-windows`:
+	<pre class="terminal">
+	$ bosh deployment garden-windows.yml
+	</pre> 
 
-##<a id='upgrade-stemcell'></a> Upgrade the Windows Stemcell
+1. Edit your manifest:
+	<pre class="terminal">
+	$ bosh edit deployment
+	</pre>
 
-1. Navigate to the **Ops Manager Installation Dashboard**.
+1. Locate the top-level property `stemcells` and update the version number of your Windows stemcell to the new version:
 
-1. Build your own vSphere stemcell. For additional help, contact [Pivotal Support](https://support.pivotal.io/).
+    ```
+    stemcells:
+    - os: windows2012R2
+      alias: windows
+      version: 0.0.183
+    ```
+1. Save and exit the manifest.
 
-1. Click the **PCF Runtime for Windows** tile. 
+1. Redeploy:
+    <pre class="terminal">
+    $ bosh -d garden-windows.yml deploy
+    </pre>
 
-1. Within the **Settings** tab, click **Stemcell** on the left-hand navigation.
+##<a id='garden'></a> Update the Garden Windows Release
 
-1. Click **Import Stemcell**.
+Perform the following steps to update the Garden Windows release:
 
-1. Select the previously acquired stemcell and click **Open**.
+1. Download the new Garden Windows release tarball from the latest BOSH Release for Windows on [Pivotal Network](http://network.pivotal.io).
 
-1. Click **Installation Dashboard** to navigate back to the **Ops Manager Installation Dashboard**. 
+1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the Advanced Troubleshooting with the BOSH CLI topic to target and log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
 
-1. Click **Apply Changes**.
+1. If necessary, download the manifest of your `garden-windows` deployment: 
+    <pre class="terminal">
+    $ bosh download manifest garden-windows garden-windows.yml
+    </pre>
 
+1. Set your deployment to `garden-windows`:
+    <pre class="terminal">
+    $ bosh deployment garden-windows.yml
+    </pre> 
 
+1. Upload the new Garden Windows release to BOSH:
+    <pre class="terminal">
+    $ bosh upload release garden-windows-y-x.tgz 
+    </pre>
+
+1. Edit your manifest:
+    <pre class="terminal">
+    $ bosh edit deployment
+    </pre>
+
+1. Locate the top-level property `releases` and update the version number of the Garden Windows release to the new version:
+
+    ```
+    releases:
+    - name: garden-windows
+      version: 0.0.6
+
+    ```
+1. Save and exit the manifest.
+
+1. Redeploy:
+    <pre class="terminal">
+    $ bosh -d garden-windows.yml deploy
+    </pre>

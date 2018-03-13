@@ -1,63 +1,46 @@
 ---
-title: Using PCF Runtime for Windows
+title: Using Windows Cells (BETA)
 owner: Diego
 ---
 
 <strong><%= modified_date %></strong>
 
-This documentation describes how operators install and manage Windows [cells](../concepts/architecture/index.html#diego-cell) in Pivotal Cloud Foundry (PCF) with PCF Runtime for Windows, and how developers push .NET apps to Windows cells. 
+This documentation describes how operators install and manage Windows [cells](../concepts/architecture/index.html#diego-cell) in Pivotal Cloud Foundry (PCF), and how developers push .NET apps to Windows cells. 
 
-If you are currently using Windows cells deployed by the BOSH Release for Windows or Diego Windows, consult the list below:
-
-* For customers who are using the BOSH Release for Windows, there is no migration path. To upgrade, you must destroy your deployment of Windows cells with the BOSH CLI and then perform a fresh install of the PCF Runtime for Windows tile.
-* For customers who are using Diego Windows, follow the procedures in the <a href="msi-crossgrade.html">Migrating from Diego Windows</a> topic to migrate your applications to Windows cells deployed by the tile.
+<p class="note"><strong>Note</strong>: You must have PCF 1.8 or later deployed on Amazon Web Services (AWS) or vSphere to install Windows cells.</p>
 
 ## <a id='overview'></a>Overview
 
-Operators who want to run Windows cells in PCF in order to enable developers to push .NET apps can deploy the PCF Runtime for Windows tile. 
-
-Deploying this tile creates a separate BOSH deployment populated with the Garden Windows release, which runs on a Windows cell built from a Windows stemcell.
+Operators who want to run Windows cells in PCF in order to enable developers to push .NET apps can deploy the BOSH Release for Windows. The BOSH Release for Windows creates a separate BOSH deployment populated with the Garden Windows release, which runs on a Windows cell built from a Windows stemcell.
 
 Once the Windows cell is running, developers can specify a Windows stack when pushing .NET apps from the command line. PCF passes the app to the Windows cell in the Garden Windows BOSH deployment. The diagram below illustrates the process.
 
 <%= image_tag('windows-overview.png') %>
 
-## <a id='requirements'></a> Requirements
-
-The recommended resource requirements for each Windows cell deployed by PCF Runtime for Windows are as follows:
-
-- Disk size: 64 GB
-- Memory: 16 GB
-- CPUs: 4  
-
-## <a id='understand'></a>Understanding PCF Runtime for Windows ##
+## <a id='understand'></a>Understanding BOSH Windows ##
 
 * <a href="understand-windows.html" class="subnav">Understanding Windows Cells</a>
 
 * <a href="windows-security.html" class="subnav">Understanding Stemcell Security</a>
 
-* <a href="about-windows-stemcells.html" class="subnav">About Windows Stemcells</a>
+## <a id='install'></a>Installing Windows Cells ##
 
-## <a id='install'></a>Installing PCF Runtime for Windows ##
-
-* <a href="./deploy-windows.html" class="subnav">Deploying PCF Runtime for Windows</a>
-* <a href="./msi-crossgrade.html" class="subnav">Migrating from Diego Windows</a>
+* <a href="./build-stemcell.html" class="subnav">Building a Windows Stemcell</a>
+	<p class="note"><strong>Note</strong>: The procedures in Building a Windows Stemcell are only required for vSphere deployments. If you are using Amazon Web Services (AWS), skip this topic and proceed directly to <a href="deploy-windows.html">Deploying the BOSH Release for Windows</a>.</p>
+</p>
+* <a href="./deploy-windows.html" class="subnav">Deploying the BOSH Release for Windows</a>
 
 ## <a id="managing"></a>Managing Windows Cells
 
 * <a href="./upgrade-windows.html" class="subnav">Upgrading Windows Cells</a>
+
+* <a href="./windows-rotate-creds.html" class="subnav">Rotating Credentials in Garden Windows</a>
 
 * <a href="./windows-troubleshooting.html" class="subnav">Troubleshooting Windows Cells</a>
 
 ## <a id='dev'></a>Developing on Windows Cells
 
 * <a href="push-windows-apps.html" class="subnav">Deploying .NET Apps to Windows Cells</a>
-
-## <a id='rotate'></a>Rotating Credentials
-
-The Elastic Runtime tile handles all of the credentials for PCF Runtime for Windows. 
-
-To rotate your credentials in PCF Runtime for Windows, re-deploy Elastic Runtime and PCF Runtime for Windows by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**. 
 
 
 

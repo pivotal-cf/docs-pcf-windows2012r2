@@ -1,0 +1,38 @@
+---
+title: Rotating Credentials in Garden Windows
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how to rotate the credentials for your Garden Windows release. 
+
+When operators rotate credentials for a Pivotal Cloud Foundry (PCF) deployment, this rotation does not automatically take effect in their Garden Windows release. To ensure that the Garden Windows release shares the new credentials of the PCF deployment, they must regenerate the manifest for the Garden Windows release and redeploy it.
+
+Perform the following steps to rotate your Garden Windows credentials:
+
+1. Follow the steps in the [Log into BOSH](../customizing/trouble-advanced.html#log-in) section of the Advanced Troubleshooting with the BOSH CLI topic to target and log in to your BOSH Director. The steps vary slightly depending on whether your PCF deployment uses internal authentication or an external user store.
+
+1. Download the manifest of your PCF deployment: 
+    <pre class="terminal">
+    $ bosh download manifest YOUR-PCF-DEPLOYMENT YOUR-PCF-MANIFEST.yml
+    </pre>
+    <p class="note"><strong>Note</strong>: You must know the name of your PCF deployment to download the manifest. To retrieve it, run <code>bosh deployments</code> 
+    to list your deployments and locate the name of your PCF deployment.</p>
+
+6. Use the manifest generation script included in the BOSH Release for Windows on [Pivotal Network](http://network.pivotal.io) to regenerate the manifest for Garden Windows. You must specify either `vsphere` or `aws` depending on your IaaS. The following example uses AWS:
+
+    <pre class="terminal">
+    $ ./generate-manifest YOUR-PCF-MANIFEST.yml aws > garden-windows.yml
+   </pre>
+
+7. Upload the Garden Windows release to BOSH:
+    <pre class="terminal">
+    $ bosh upload release garden-windows-y-x.tgz 
+    </pre>
+
+8. Redeploy Garden Windows:
+    <pre class="terminal">
+    $ bosh -d garden-windows.yml deploy
+    </pre>
+

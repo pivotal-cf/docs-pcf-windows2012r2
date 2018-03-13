@@ -1,0 +1,138 @@
+---
+title: Building a Windows Stemcell 
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how to create a local [Concourse](http://concourse.ci) pipeline to build a Windows stemcell for use with the BOSH Release for Windows. If you are deploying the BOSH Release for Windows on vSphere, you must follow the procedures in this topic to build a stemcell before performing the steps in [Deploying BOSH Windows](deploy-windows.html).
+
+<p class="note"><strong>Note</strong>: The procedures in this topic are only required for vSphere deployments. If you are using Amazon Web Services (AWS), skip this topic and proceed directly to <a href="deploy-windows.html">Deploying the BOSH Release for Windows</a>.</p>
+
+##<a id="reqs"></a> Requirements
+
+Concourse is a pipeline-based continuous integration system. To learn more about Concourse, see the [documentation](http://concourse.ci/introduction.html).
+
+You must have the following to create a Concourse pipeline for building a Windows stemcell:
+
+* A vSphere environment with outbound Internet and root access to an ESXi, which can be nested
+* Access to an S3-compatible blobstore, either through Amazon Web Services (AWS) or a local [Minio](https://www.minio.io/) server 
+* The BOSH Release for Windows, downloaded from [Pivotal Network](http://network.pivotal.io)
+
+## <a id='esxi'></a> Step One: Prepare Your ESXi
+
+1. SSH into the ESXi as root, replacing YOUR-ESXI with the IP address or domain name of the ESXi host. When prompted, enter your root password.
+    <pre class="terminal">
+    $ ssh root@YOUR-ESXI
+    Password:
+    </pre>
+2. Run the following commands from the ESXi:
+    <pre class="terminal">
+    [root@:~] esxcli system settings advanced set -o /Net/GuestIPHack -i 1
+    [root@:~] esxcli network firewall ruleset set --ruleset-id=gdbserver --enabled=yes
+    </pre>
+
+##<a id='blobstore'></a> Step Two: Prepare Your Blobstore
+
+You can use [AWS](#aws) or a local [Minio](#minio) server for your S3-compatible blobstore. 
+
+###<a id='aws'></a> AWS ###
+
+Perform the following steps to prepare and populate an AWS S3 blobstore:
+
+1. Navigate to the AWS Console. 
+1. Click **S3** to open the S3 Management Console.
+1. Click **Create Bucket**.
+1. Enter a globally unique name for your S3 bucket under **Bucket Name**. 
+1. Under **Region**, select **US Standard**.
+1. Click **Create**.
+1. Select the newly created S3 bucket and click **Permissions**. Ensure that your user has **Upload/Delete** permissions. If necessary, navigate to the Identity and Access Management (IAM) console to ensure your user has the correct IAM permissions.  
+1. Download the following files:
+    * The VMWare OVF Tool Linux 64-bit from [VMWare](https://www.vmware.com/support/developer/ovf/) 
+    * The UltraDefrag tool from [SourceForge](https://sourceforge.net/projects/ultradefrag/files/stable-release/7.0.1/ultradefrag-portable-7.0.1.bin.amd64.zip/download)
+    * The PSWindowsUpdate PowerShell module from [Microsoft](https://gallery.technet.microsoft.com/scriptcenter/2d191bcd-3308-4edd-9de2-88dff796b0bc) 
+    * The Windows Server 2012 R2 ISO from [Microsoft](https://msdn.microsoft.com/en-us/windowsserver2012r2.aspx)
+1. Rename the PSWindowsUpdate PowerShell module from `PSWindowsUpdate.zip` to `PSWindowsUpdate_v1.zip`:
+    <pre class="terminal">$ mv PSWindowsUpdate.zip PSWindowsUpdate_v1.zip</pre>
+1. Upload the VMWare OVF Tool `.bundle` file and the PSWindowsUpdate PowerShell module `.zip` file to your S3 bucket.
+    
+###<a id='minio'></a> Minio ###
+
+Perform the following steps to prepare and populate a Minio blobstore:
+
+1. Install [Golang](https://docs.minio.io/docs/how-to-install-golang).
+1. Install Minio by building it from source:
+    <pre class="terminal">
+    $ go get -u github.com/minio/minio
+    </pre>
+1. [Download](https://docs.minio.io/docs/minio-client-quickstart-guide) and install `mc`, the Minio Client. 
+1. Follow the instructions for your operating system in the Minio [readme](https://github.com/minio/minio) to run a local Minio server. When the server starts, Minio outputs the `AccessKey` and `SecretKey`. Record these values.
+<p class="note"><strong>Note</strong>: You must have at least 5% of your local disk free to run a local Minio server.</p>
+1. With your local Minio server running, add your server to your list of hosts:
+<pre class="terminal">$ mc config host add myminio <span>http:</span>//10.0.0.10:9000 YOUR-ACCESS-KEY YOUR-SECRET-KEY</pre> 
+1. Create a bucket:
+    <pre class="terminal">$ mc mb myminio/bosh-windows-bucket</pre>
+1. Download the following files:
+    * The VMWare OVF Tool Linux 64-bit from [VMWare](https://www.vmware.com/support/developer/ovf/) 
+    * The UltraDefrag tool from [SourceForge](https://sourceforge.net/projects/ultradefrag/files/stable-release/7.0.1/ultradefrag-portable-7.0.1.bin.amd64.zip/download)
+    * The PSWindowsUpdate PowerShell module from [Microsoft](https://gallery.technet.microsoft.com/scriptcenter/2d191bcd-3308-4edd-9de2-88dff796b0bc) 
+    * The Windows Server 2012 R2 ISO from [Microsoft](https://msdn.microsoft.com/en-us/windowsserver2012r2.aspx)
+1. Rename the PSWindowsUpdate PowerShell module from `PSWindowsUpdate.zip` to `PSWindowsUpdate_v1.zip`:
+    <pre class="terminal">$ mv PSWindowsUpdate.zip PSWindowsUpdate_v1.zip</pre>
+1. Copy the the VMWare OVF Tool `.bundle` file and the PSWindowsUpdate PowerShell module `.zip` file into your Minio bucket:
+    <pre class="terminal">
+    $ mc cp ~/Downloads/VMware-ovftool-4.1.0-2459827-lin.x86\_64.bundle myminio/bosh-windows-bucket
+    $ mc cp ~/Downloads/PSWindowsUpdate_v1.zip myminio/bosh-windows-bucket
+    </pre>
+
+##<a id='prepare-pipeline'></a> Step Three: Prepare Your Pipeline
+
+6. Change into the directory where you downloaded the BOSH Release for Windows files from Pivotal Network:
+    <pre class="terminal">$ cd ~/bosh-windows</pre>
+
+7. Open the `consumer-vars.yml` file and replace the `REPLACE_ME` placeholders as follows:
+    * `AWS_ACCESS_KEY`: Enter your AWS or Minio access key.
+    * `AWS_SECRET_KEY`: Enter your AWS or Minio secret key.
+    * `S3_OVFTOOL_BUCKET`, `S3_ULTRADEFRAG_BUCKET`, `S3_WINDOWS_UPDATE_BUCKET`, `S3_STEMCELL_OUTPUT_BUCKET`, `S3_WINDOWS_ISO_BUCKET`: Enter the name of the bucket you created in your S3-compatible blobstore. If you followed the steps above to set up a Minio server, the name is `bosh-windows-bucket`.
+    * `ESXI_REMOTE_ADDRESS`: Enter the IP address of your ESXi host.
+    * `ESXI_REMOTE_PASSWORD`: Enter the root password of your ESXi host.
+    * `ESXI_DATASTORE`: Enter the UUID of the ESXi datastore to store the VM.
+    * `ESXI_CACHE_DATASTORE`: Enter the UUID of the ESXi datastore to store the cache file for Packer. This can be the same value as `ESXI_DATASTORE`.
+    * `WINDOWS_PASSWORD`: Choose an Administrator password for the outputted stemcell. This is the password you use to log in to the Windows cell through a Remote Desktop Protocol (RDP) client. If the password does not meet the normal Windows complexity rules, the password will remain the default, `vagrant`. 
+
+##<a id='concourse'></a> Step Four: Deploy Concourse
+
+<p class="note"><strong>Note</strong>: When deploying Concourse locally, your local machine must have Internet access.</p>
+
+1. Download and install [VirtualBox](https://www.virtualbox.org/).
+1. Download and install [Vagrant](https://www.vagrantup.com/downloads.html).
+1. Perform the following commands to spin up a local Concourse server:
+    <pre class="terminal">
+    $ vagrant init concourse/lite
+    $ vagrant up
+    </pre>
+    View the Concourse interface by navigating to http://192.168.100.4:8080. 
+
+8. Download the binary of `fly`, the Concourse CLI, from [Concourse](https://concourse.ci/downloads.html), and place it in your `$PATH`.
+
+9. Log in to your Concourse server:
+    <pre class="terminal">
+    $ fly -t local login -c <span>http</span>://192.168.100.4:8080
+    </pre>
+
+9. Set your pipeline:
+    <pre class="terminal">
+    $ fly -t local set-pipeline -p bosh-windows-consumer -c bosh-windows-consumer.yml -l consumer-vars.yml
+    </pre>
+
+10. If Concourse tells you the pipeline is paused, unpause it:
+    <pre class="terminal">
+    $ fly unpause-pipeline -t local -p bosh-windows-consumer
+    </pre>
+
+11. Navigate to your Concourse pipeline in a browser at http://192.168.100.4:8080/teams/main/pipelines/bosh-windows-consumer.
+
+12. Kick off a build by selecting **create-stemcell** and clicking the plus sign in the upper right. After several hours, the outputted stemcell appears in the bucket you created in your S3-compatible blobstore.
+
+
+
