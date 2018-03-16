@@ -44,7 +44,7 @@ Perform the following steps to push a .NET app to a Windows cell:
 ###<a id='context-routing'></a>Context Path Routing Support for ASP.NET Apps</a>
 
 ASP.NET developers can host applications under a route path. 
-Within Windows cells, an app cannot have multiple routes pointing to it. 
+Within Windows cells, you can have multiple routes to an app, but those routes cannot have different context paths.
 If you want to route an app under another app, you need to push that secondary app with the `--no-route` and `--no-start` flags.
 
 For example, if you would like to route `APP-NAME-TWO` under `APP-NAME-ONE`:
