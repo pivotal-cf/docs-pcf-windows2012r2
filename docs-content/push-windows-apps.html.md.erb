@@ -52,14 +52,9 @@ For example, if you would like to route `APP-NAME-TWO` under `APP-NAME-ONE`:
 1. Run the following command to push the primary app</br>
     `cf push APP-NAME-ONE`
 
-1. Run the following command to push the secondary app
-    `cf push APP-NAME-TWO --no-start --no-route`
-
 1. Run the following command to map the route of the secondary app under the primary app
-    `cf map-route APP-NAME-TWO DOMAIN --hostname APP-NAME-ONE --path APP-NAME-TWO`
+    `cf push APP-NAME-TWO --hostname APP-NAME-ONE --route-path APP-NAME-TWO`
 
-1. Run the following command to start the app</br>
-    `cf start APP-NAME-TWO`
 
 ##<a id='self-hosted'></a> Push a Self-Hosted App
 
