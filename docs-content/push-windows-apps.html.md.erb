@@ -46,13 +46,17 @@ Perform the following steps to push a .NET app to a Windows cell:
 ASP.NET developers can host applications under a route path. 
 Within Windows cells, you can have multiple routes to an app, but those routes cannot have different context paths.
 
-For example, if you would like to `APP-NAME-TWO` under `APP-NAME-ONE`, in order to create `APP-NAME-ONE.example-domain.com/APP-NAME-TWO`:
+For example, if you would like to route `APP-NAME-TWO` under `APP-NAME-ONE`, in order to create the `APP-NAME-ONE.example-domain.com/APP-NAME-TWO` path:
 
-1. Run the following command to push the primary app</br>
-    `cf push APP-NAME-ONE`
+1. Run `cf push APP-NAME-ONE` to push the primary app.</br>
+    <pre class="terminal">
+    $ cf push APP-NAME-ONE
+    </pre>
 
-1. Run the following command to map the route of the secondary app under the primary app
-    `cf push APP-NAME-TWO --hostname APP-NAME-ONE --route-path APP-NAME-TWO`
+1. Run `cf push APP-NAME-TWO --hostname APP-NAME-ONE --route-path APP-NAME-TWO` to map the route of the secondary app under the primary app.
+    <pre class="terminal">
+    $ cf push APP-NAME-TWO --hostname APP-NAME-ONE --route-path APP-NAME-TWO
+    </pre>
 
 If you need to use a non-default domain, add the domain option (`-d`) followed by your chosen domain address to the `cf-push` command from Step 2.
 
