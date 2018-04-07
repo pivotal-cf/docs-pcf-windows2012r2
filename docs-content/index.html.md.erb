@@ -114,5 +114,7 @@ PAS for Windows 2012R2 has the following known issues:
 
 * When a PAS for Windows 2012R2 container shuts down, it may leave behind ghost connections and pending transactions that put the app in an inconsistent state. This is due to a known limitation of the IronFrame containerization framework. See the [Container Shutdown](./understand-windows.html#container-shutdown) section for details.
 
+* On vSphere, if OpenSSH is not installed on the stemcell during the stemcell creation process, the `enable_ssh` job's drain script fails.
+
 [PAS for Windows](../windows/index.html) does not have any of the above issues.
 
