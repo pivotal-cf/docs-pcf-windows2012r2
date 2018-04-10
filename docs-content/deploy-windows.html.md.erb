@@ -42,11 +42,9 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 
 1. Specify how you would like to manage the administrator password for your Windows VMs. The default option is to **Use random administrator password**.
 1. (Optional) Select the **BETA: Enable BOSH-native SSH support on all VMs** checkbox to start the Microsoft beta port of the OpenSSH daemon on port 22 on all VMs. Users will be able to SSH onto Windows VMs with the `bosh ssh` command, and enter a CMD terminal as an administrator user. They can then run `powershell.exe` to start a PowerShell session.
-1. (Optional) Select the **Enable Remote Desktop Protocol** checkbox to enable RDP connections to the Windows Cells.
+1. (Optional) Select the **Enable Remote Desktop Protocol** checkbox to enable connections to all Windows Cells through Remote Desktop Protocol (RDP).
 
     <p class="note"><strong>Note</strong>: This feature is beta and not considered production-ready.</p>
-
-1. (Optional) If you want all VMs to support connection through Remote Desktop Protocol (RDP), click **Enable Remote Desktop Protocol**. 
 
 1. (Optional) If you want to configure a Key Management Service (KMS) that your volume-licensed Windows cell can register with, perform the following steps:
     1. Click **Enable**
