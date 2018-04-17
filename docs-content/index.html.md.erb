@@ -7,14 +7,13 @@ owner: Diego
 
 <p class='note'><strong>Note:</strong> Elastic Runtime has been renamed Pivotal Application Service. Runtime for Windows has been renamed Pivotal Application Service for Windows 2012R2.</p>
 
-<p class='note'><strong>Note:</strong> PAS for Windows 2012R2 is provided for compatibility with Windows Server 2012 R2 only. For Pivotal's fully featured .NET / Windows product, please see [Pivotal Application Service for Windows](https://docs.pivotal.io/pivotalcf/windows). Please refer to the [limitations](#limitations) of this product below if you require Windows Server 2012 R2.</p>
-
+<p class='note'><strong>Note:</strong> PAS for Windows 2012R2 is provided for compatibility with Windows Server 2012 R2 only. For Pivotal's fully featured .NET / Windows product, see <a hrf="../windows/indx.html">Pivotal Application Service for Windows</a>. If you require using Windows Server 2012R2, see the <a hrf="">Limitations</a> section of this topic.</p>
 
 ## <a id='overview'></a>Overview
 
-Pivotal Application Service for Windows 2012R2 enables PCF to host full .NET Framework and Windows-based applications, using Windows Server 2012 R2 and the IronFrame containerization framework. For Windows Server 2016 support, see [Pivotal Application Service for Windows](https://docs.pivotal.io/pivotalcf/windows).
+Pivotal Application Service for Windows 2012R2 enables PCF to host full .NET Framework and Windows-based applications, using Windows Server 2012R2 and the IronFrame containerization framework. For Windows Server 2016 support, see [Pivotal Application Service for Windows](../windows/index.html).
 
-By deploying the PAS for Windows 2012R2 tile in the Ops Manager Installation Dashboard, operators can provision, operate, and manage Diego cells based on Windows Server 2012 R2. Once deployed, developers can then push .NET Framework applications to Windows [Diego cells](../concepts/architecture/index.html#diego-cell) using the [Cloud Foundry Command Line Interface](https://docs.pivotal.io/pivotalcf/cf-cli/) (cf CLI) and specifying the `windows2012R2` stack.
+By deploying the PAS for Windows 2012R2 tile in the Ops Manager Installation Dashboard, operators can provision, operate, and manage Diego cells based on Windows Server 2012R2. Once deployed, developers can then push .NET Framework applications to Windows [Diego cells](../concepts/architecture/index.html#diego-cell) using the [Cloud Foundry Command Line Interface](https://docs.pivotal.io/pivotalcf/cf-cli/) (cf CLI) and specifying the `windows2012R2` stack.
 
 Operators can install PAS for Windows 2012R2 on Microsoft Azure, VMware vSphere, Amazon Web Services (AWS), or Google Cloud Platform (GCP).
 
@@ -66,7 +65,7 @@ Due to Microsoft’s licensing requirements, operators must use their own licens
 
 Deployments of Windows Diego Cells with PAS for Windows 2012R2 have the following limitations:
 
-* Because of the process management characteristics of Windows Server 2012 R2, Windows cells can host a maximum of 40 app instances per cell. Operators should take this density constraint into account when planning the sizes of their PAS for Windows 2012R2 deployments, in addition to CPU, disk, and memory needs.
+* Because of the process management characteristics of Windows Server 2012R2, Windows cells can host a maximum of 40 app instances per cell. Operators should take this density constraint into account when planning the sizes of their PAS for Windows 2012R2 deployments, in addition to CPU, disk, and memory needs.
 
 * The following Cloud Foundry features are not supported by PAS for Windows 2012R2:
 
@@ -80,7 +79,7 @@ Deployments of Windows Diego Cells with PAS for Windows 2012R2 have the followin
   - Active Directory Domain Services, i.e. joining Windows cells to an Active Directory domain.
   - Integrated Windows Authentication. Instead, operators should deploy Active Directory Federation Services and the Pivotal SSO tile to enable OAuth-based authentication.
 
-Please consider [Pivotal Application Service for Windows](https://docs.pivotal.io/pivotalcf/windows), which has fewer limitations and will continue to receive additional platform features.
+Pivotal recommends you use [Pivotal Application Service for Windows](../windows/index.html), which has fewer limitations and will continue to receive additional platform features.
 
 ## <a id='issues'></a>Known Issues
 
