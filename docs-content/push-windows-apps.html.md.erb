@@ -1,21 +1,25 @@
 ---
-title: Deploying .NET Apps to Windows Cells 
+title: Deploying .NET Apps to Windows Cells
 owner: Greenhouse
 ---
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to push .NET apps to Windows cells. 
-
-After operators have installed and configured the Pivotal Cloud Foundry (PCF) Runtime for Windows v1.9 tile, developers can push .NET apps to the Windows cell. For more information on installing the PCF Runtime for Windows v1.9 tile, see [Deploying PCF Runtime for Windows](deploy-windows.html).
-
-Developers can push both [OWIN](http://owin.org/) and non-OWIN apps, and can push apps that are served by [Hostable Web Core](#push) or [self-hosted](#self-hosted). 
+This topic describes how to push .NET apps to Windows cells.
 
 For how to develop .NET apps to run on PCF Runtime for Windows see the [.NET Cookbook](https://dotnet-cookbook.cfapps.io/intro/). For how to develop .NET microservices for .NET apps using Steeltoe, see the [Steeltoe documentation](http://steeltoe.io/docs/).
 
+## <a id='overview'></a> Overview
+
+After operators have installed and configured the Pivotal Cloud Foundry (PCF) Runtime for Windows v1.10 tile, developers can push .NET apps to the Windows cell. For documentation on installing the PCF Runtime for Windows tile, see the [Deploying PCF Runtime for Windows](deploy-windows.html) topic. Developers can push both [OWIN](http://owin.org/) and non-OWIN apps, and can push apps that are served by [Hostable Web Core](#push) or [self-hosted](#self-hosted).
+
+Operators must also install the Cloud Foundry Command Line Interface (CLI) in order to perform the forthcoming cf push commands. For information on installing the Cloud Foundry CLI, see the [Installing the cf CLI](../cf-cli/install-go-cli.html) topic.
+
+If you have upgraded to PCF Runtime for Windows 1.10 and have apps that you want to migrate, see the [Upgrading Windows Cells](upgrade-windows.html) topic.
+
 ##<a id='push'></a> Push a .NET App
 
-By default, PCF serves .NET apps with Hostable Web Core, which is a lighter version of the Internet Information Services (IIS) server that contains the core IIS functionality.
+By default, PCF serves .NET apps with Hostable Web Core (HWC), which is a lighter version of the Internet Information Services (IIS) server that contains the core IIS functionality.
 
 Perform the following steps to push a .NET app to a Windows cell:
 
@@ -24,23 +28,23 @@ Perform the following steps to push a .NET app to a Windows cell:
 	$ cf api api.YOUR-SYSTEM-DOMAIN
 	</pre>
 
-1. Push your .NET app, replacing `APP-NAME` with the name of your app:
-
+1. Push your .NET app, replacing `APP-NAME` with the name of your app, choose one of the following depending on the app you're pushing:
+	<br><br>
+	* If you are pushing .NET Framework applications, use the following command:
 	<pre class="terminal">
-	$ cf push APP-NAME -s windows2012R2 -b binary_buildpack
+	$ cf push APP-NAME -s windows2012R2 -b hwc_buildpack
 	</pre>
+	* If you are pushing an application with <code>.bat</code> or <code>.exe</code> files, use the following command:
+		<pre class="terminal">$ cf push -s windows2012R2 -b binary_buildpack</pre>
 
-	Push your app from a directory containing either a `.exe` binary or a valid `Web.config` file for .NET apps. Alternatively, add the `-p` flag to your `cf push` command and specify the path to the directory that contains the `.exe` or `Web.config` file.<br><br>
-
-	The push command must include the following flags:
-	* You specify the stack as `windows2012R2` to instruct PCF to run the app in the Windows cell. 
-	* You specify the buildpack as `binary_buildpack` to expedite the staging process, because the binary buildpack is lightweight. Garden Windows does not use the binary buildpack to stage your app. 
+	By passing `windows2012R2` with the `-s` flag, you instruct PCF to run the app in the Windows cell.
+	If you are not pushing your app from its directory, add the `-p` flag to specify the path to the directory that contains the app.
 
 1. Wait for your app to stage and start. If an error occurs, see the [Troubleshoot App Errors](#troubleshoot) section.
 
 ##<a id='self-hosted'></a> Push a Self-Hosted App
 
-Developers can choose to push a self-hosted app instead of using Hostable Web Core. Self-hosted apps combine the server code with the app code. 
+Developers can choose to push a self-hosted app instead of using Hostable Web Core. Self-hosted apps combine the server code with the app code.
 
 Perform the following steps to push a self-hosted app:
 
@@ -69,15 +73,13 @@ Perform the following steps to deploy a SOAP web service:
 1. Publish the service to your local file system.
 1. Push your service from the directory containing the published web service, replacing `SERVICE-NAME` with the name of your service:
 	<pre class="terminal">
-	$ cf push SERVICE-NAME -s windows2012R2 -b binary_buildpack -u none
+	$ cf push SERVICE-NAME -s windows2012R2 -b hwc_buildpack -u none
 	</pre>
 	<br>
-	The push command must include the following flags:
-	* You specify the stack as `windows2012R2` to instruct PCF to run the app in the Windows cell. 
-	* You specify the buildpack as `binary_buildpack` to expedite the staging process, because the binary buildpack is lightweight. Garden Windows does not use the binary buildpack to stage your app. 
+	The push command must include the `-s` flag to specify the stack as `windows2012R2`, which instructs PCF to run the app in the Windows cell.
 	<br><br>
 	The push command can include the following optional flags:
-	* If you are not pushing your service from the directory containing the published web service, add the `-p` flag to your `cf push` command and specify the path to the directory that contains the published web service. 
+	* If you are not pushing your service from the directory containing the published web service, add the `-p` flag to your `cf push` command and specify the path to the directory that contains the published web service.
 	* If you do not have a route serving `/`, add the `-u none` flag to disable the health check.
 	<br><br>
 
@@ -90,7 +92,7 @@ Perform the following steps to deploy a SOAP web service:
 	urls: YOUR-WEB-SERVICE.YOUR-DOMAIN
 	last uploaded: Thu Nov 17 19:18:19 UTC 2016
 	stack: windows2012R2
-	buildpack: binary_buildpack
+	buildpack: hwc_buildpack
 	```
 
 ###<a id='correct-wsdl'></a> Step 2: Modify the WSDL File
@@ -110,7 +112,7 @@ See the following portion of an example WSDL file:
 - </wsdl:service>
 ```
 
-The WSDL file provides the port number for the SOAP web service as 62492. This is the port that the web service listens on in the [Garden container](../concepts/container-security.html#mechanics), but external applications cannot access the service on this port. Instead, external applications must use port 80, and the [Gorouter](../concepts/architecture/router.html) will route the request to the web service in the container. 
+The WSDL file provides the port number for the SOAP web service as 62492. This is the port that the web service listens on in the [Garden container](../concepts/container-security.html#mechanics), but external applications cannot access the service on this port. Instead, external applications must use port 80, and the [Gorouter](../concepts/architecture/router.html) will route the request to the web service in the container.
 
 The URL of the web service in the WSDL file must be modified to remove `62492`. With no port number, the URL defaults to port 80. In the example above, the modified URL would be `http://webservice.example.com/WebService1.asmx`.
 
@@ -124,10 +126,10 @@ SOAP web service developers can resolve this problem in one of two ways:
 
 Developers of external applications that consume the SOAP web service can perform the following steps to use a modified version of the WSDL file:
 
-1. In a browser, navigate to the WSDL file of the web service. 
+1. In a browser, navigate to the WSDL file of the web service.
 	<br><br>
-	You can reach the WSDL of your web service by constructing the URL as follows: 
-		
+	You can reach the WSDL of your web service by constructing the URL as follows:
+
 	`YOUR-WEB-SERVICE.YOUR-DOMAIN/ASMX-FILE.asmx?wsdl`
 	<br><br>
 	See the following URL as an example:
@@ -141,8 +143,81 @@ Developers of external applications that consume the SOAP web service can perfor
 
 ##<a id='troubleshoot'></a> Troubleshoot App Errors
 
-If a .NET app fails to start, consult the following list of errors and their possible solutions:
+If a .NET app fails to start, consult the following list of errors and their possible solutions.
 
-* `NoCompatibleCell`: Your PCF deployment cannot connect to your Windows cell. Operators should see the [Troubleshooting Windows Cells](windows-troubleshooting.html) topic for information about how to troubleshoot their Windows cell configuration.
+###<a id='nocompatiblecell'></a> Error: No Compatible Cell
 
-* `Start unsuccessful`: Your app may not contain the required DLL files and dependencies. Ensure that you are pushing from a directory containing your app dependencies, or specifying the directory with the `-p` flag. Your app also may be misconfigured. Ensure that your app directory contains either a valid `.exe` binary or a valid `Web.config` file. 
+**Symptom**: `NoCompatibleCell` error when you try to push a .NET app.
+
+**Explanation**: Your PCF deployment cannot connect to your Windows cell.
+
+One possible cause for this error is that PCF Runtime for Windows v1.11 and earlier use component ports that newer versions of the Windows 2012R2 stemcell keep closed. Specifically, current Windows stemcells keep port 8031 of the Consul agent VM and ports 1800 and 1801 of the Cell Rep VM closed, but the older Windows stemcells originally used with v1.11 did not.
+
+**Solution**:
+
+Change your runtime configuration to open the required ports on Windows 2012R2 cells as follows:
+
+1. Create a BOSH release `open-consul-rep-windows` containing a job `open-consul-rep-windows` that runs the following PowerShell snippet as a `pre-start.ps1` script:
+
+    ```
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentTCPPort" })) {
+      New-NetFirewallRule -DisplayName "ConsulAgentTCPPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 8301 -Protocol TCP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentTCPPort" })) {
+        Write-Error "Unable to add ConsulAgentTCPPort firewall rule"
+      }
+    }
+
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentUDPPort" })) {
+      New-NetFirewallRule -DisplayName "ConsulAgentUDPPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 8301 -Protocol UDP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentUDPPort" })) {
+        Write-Error "Unable to add ConsulAgentUDPPort firewall rule"
+      }
+    }
+
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "RepPort" })) {
+      New-NetFirewallRule -DisplayName "RepPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 1800 -Protocol TCP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "RepPort" })) {
+        Write-Error "Unable to add RepPort firewall rule"
+      }
+    }
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "SecureRepPort" })) {
+      New-NetFirewallRule -DisplayName "SecureRepPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 1801 -Protocol TCP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "SecureRepPort" })) {
+        Write-Error "Unable to add RepPort firewall rule"
+      }
+    }
+    ```
+    See [Creating a Release](http://bosh.io/docs/create-release/) in the BOSH documentation for more information.
+
+1. Run `bosh runtime-config` to retrieve your current runtime config as a `.yml` file:
+<pre class="terminal">
+    $ bosh runtime-config > runtime.yml
+</pre>
+
+1. Edit the `addons:` section of your runtime config file by adding the following code, which runs the `open-consul-rep-windows` job whenever BOSH creates a Windows 2012R2 stemcell:
+
+    ```
+    - name: open-consul-rep-windows
+      jobs:
+      - name: open-consul-rep-windows
+        release: open-consul-rep-windows
+      include:
+        stemcell:
+        - os: windows2012R2
+    ```
+See the [Addons Block](http://bosh.io/docs/runtime-config/#addons) section in the BOSH documentation for more information.
+
+1. Run `bosh update-runtime-config` to update your runtime configuration:
+<pre class="terminal">
+    $ bosh update-runtime-config runtime.yml
+</pre>
+
+See the [Troubleshooting Windows Cells](windows-troubleshooting.html) topic for information about troubleshooting your Windows cell configuration.
+
+###<a id='startunsuccessful'></a> Error: Start Unsuccessful
+
+**Symptom**: `Start unsuccessful` error when you try to push a .NET app.
+
+**Explanation**: Your app may not contain the required DLL files and dependencies, or may be otherwise misconfigured.
+
+**Solution**: Ensure that you are pushing from a directory containing your app dependencies, or specify the directory with the `-p` flag. Also ensure that your app directory contains either a valid `.exe` binary or a valid `Web.config` file.
