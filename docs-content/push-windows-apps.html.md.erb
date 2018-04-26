@@ -140,8 +140,81 @@ Developers of external applications that consume the SOAP web service can perfor
 
 ##<a id='troubleshoot'></a> Troubleshoot App Errors
 
-If a .NET app fails to start, consult the following list of errors and their possible solutions:
+If a .NET app fails to start, consult the following list of errors and their possible solutions.
 
-* `NoCompatibleCell`: Your PCF deployment cannot connect to your Windows cell. See the [Troubleshooting Windows Cells](windows-troubleshooting.html) topic for information about troubleshooting your Windows cell configuration.
+###<a id='nocompatiblecell'></a> Error: No Compatible Cell
 
-* `Start unsuccessful`: Your app may not contain the required DLL files and dependencies. Ensure that you are pushing from a directory containing your app dependencies, or specify the directory with the `-p` flag. Your app also may be misconfigured. Ensure that your app directory contains either a valid `.exe` binary or a valid `Web.config` file.
+**Symptom**: `NoCompatibleCell` error when you try to push a .NET app.
+
+**Explanation**: Your PCF deployment cannot connect to your Windows cell.
+
+One possible cause for this error is that PCF Runtime for Windows v1.11 and earlier use component ports that newer versions of the Windows 2012R2 stemcell keep closed. Specifically, current Windows stemcells keep port 8031 of the Consul agent VM and ports 1800 and 1801 of the Cell Rep VM closed, but the older Windows stemcells originally used with v1.11 did not.
+
+**Solution**:
+
+Change your runtime configuration to open the required ports on Windows 2012R2 cells as follows:
+
+1. Create a BOSH release `open-consul-rep-windows` containing a job `open-consul-rep-windows` that runs the following PowerShell snippet as a `pre-start.ps1` script:
+
+    ```
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentTCPPort" })) {
+      New-NetFirewallRule -DisplayName "ConsulAgentTCPPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 8301 -Protocol TCP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentTCPPort" })) {
+        Write-Error "Unable to add ConsulAgentTCPPort firewall rule"
+      }
+    }
+
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentUDPPort" })) {
+      New-NetFirewallRule -DisplayName "ConsulAgentUDPPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 8301 -Protocol UDP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "ConsulAgentUDPPort" })) {
+        Write-Error "Unable to add ConsulAgentUDPPort firewall rule"
+      }
+    }
+
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "RepPort" })) {
+      New-NetFirewallRule -DisplayName "RepPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 1800 -Protocol TCP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "RepPort" })) {
+        Write-Error "Unable to add RepPort firewall rule"
+      }
+    }
+    if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "SecureRepPort" })) {
+      New-NetFirewallRule -DisplayName "SecureRepPort" -Action Allow -Direction Inbound -Enabled True -LocalPort 1801 -Protocol TCP
+      if (-Not (Get-NetFirewallRule | Where-Object { $_.DisplayName -eq "SecureRepPort" })) {
+        Write-Error "Unable to add RepPort firewall rule"
+      }
+    }
+    ```
+    See [Creating a Release](http://bosh.io/docs/create-release/) in the BOSH documentation for more information.
+
+1. Run `bosh runtime-config` to retrieve your current runtime config as a `.yml` file:
+<pre class="terminal">
+    $ bosh runtime-config > runtime.yml
+</pre>
+
+1. Edit the `addons:` section of your runtime config file by adding the following code, which runs the `open-consul-rep-windows` job whenever BOSH creates a Windows 2012R2 stemcell:
+
+    ```
+    - name: open-consul-rep-windows
+      jobs:
+      - name: open-consul-rep-windows
+        release: open-consul-rep-windows
+      include:
+        stemcell:
+        - os: windows2012R2
+    ```
+See the [Addons Block](http://bosh.io/docs/runtime-config/#addons) section in the BOSH documentation for more information.
+
+1. Run `bosh update-runtime-config` to update your runtime configuration:
+<pre class="terminal">
+    $ bosh update-runtime-config runtime.yml
+</pre>
+
+See the [Troubleshooting Windows Cells](windows-troubleshooting.html) topic for information about troubleshooting your Windows cell configuration.
+
+###<a id='startunsuccessful'></a> Error: Start Unsuccessful
+
+**Symptom**: `Start unsuccessful` error when you try to push a .NET app.
+
+**Explanation**: Your app may not contain the required DLL files and dependencies, or may be otherwise misconfigured.
+
+**Solution**: Ensure that you are pushing from a directory containing your app dependencies, or specify the directory with the `-p` flag. Also ensure that your app directory contains either a valid `.exe` binary or a valid `Web.config` file.
