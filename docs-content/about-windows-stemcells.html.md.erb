@@ -16,6 +16,40 @@ PAS for Windows 2012R2 deployments currently use a stemcell based on Windows Ser
 
 The size of the stemcell's root disk determines the minimum root disk size of any Windows VM that the BOSH Director can create from that stemcell. The relationship between a stemcell's disk size and the root disk size of the Windows cells depends on your IaaS as shown in the table below.
 
+Stemcell 1200.17 and 1709.5 onwards, we have disabled root disk resizing and have provided large root disks. In the near future, we would provide a way to control the disk size for your Windows VM. 
+
+<p class='note'><strong>Note:</strong>Below table is applicable for 1200.17+ and 1709.5+</p>
+
+<table id='disk-sizes' border="1" class="nice" >
+  <tr>
+    <th>IaaS</th>
+    <th>Windows Stemcell 1200.17+ root disk size</th>
+    <th>Windows Stemcell 1709.5+ root disk size</th>
+  </tr>
+  <tr>
+    <th>Azure</th>
+    <td>128 GB</td>
+    <td>30 GB</td>
+  </tr>
+  <tr>
+    <th>AWS</th>
+    <td>128 GB</td>
+    <td>128 GB<sup>*</sup></td>
+  </tr>
+  <tr>
+    <th>GCP</th>
+    <td>100 GB</td>
+    <td>100 GB or larger</td>
+  </tr>
+  <tr>
+    <th>vSphere</th>
+    <td>Recommended 128 GB+<sup>**</sup></td>
+    <td>Recommended 128 GB+<sup>**</sup></td>
+  </tr>
+</table>
+
+The below table is applicable for 1200.16 and below, 1709.4 and below. 
+
 <table id='disk-sizes' border="1" class="nice" >
   <tr>
     <th>IaaS</th>
@@ -44,7 +78,9 @@ The size of the stemcell's root disk determines the minimum root disk size of an
   </tr>
 </table>
 
-<sup>\*</sup>Because you create your own stemcell on vSphere, you can control its root disk size. See [Creating a vSphere Stemcell Manually](./vsphere-stemcell-build.html) for more information.
+<sup>\*</sup> See the [limitations](https://docs.pivotal.io/pivotalcf/2-1/windows/index.html#limitations) section about 1709 for Amazon Web Services
+
+<sup>\**</sup>Because you create your own stemcell on vSphere, you can control its root disk size. See [Creating a vSphere Stemcell Manually](./vsphere-stemcell-build.html) for more information.
 
 In the PAS for Windows 2012R2 tile > **Resource Config** pane, the VM types that you can choose from reflect the disk size constraints in the table above.
 
