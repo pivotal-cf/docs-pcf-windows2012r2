@@ -14,9 +14,9 @@ PAS for Windows 2012R2 deployments currently use a stemcell based on Windows Ser
 
 ## <a id="sizing"></a> Root Disk Sizing
 
-The size of the stemcell's root disk determines the minimum root disk size of any Windows VM that the BOSH Director can create from that stemcell. The relationship between a stemcell's disk size and the root disk size of the Windows cells depends on your IaaS as shown in the table below.
+<p class='note'><strong>Note</strong>: Root disk sizing has been disabled and the default disk size for Windows cells has been increased. Future releases will provide ephemeral disk support to allow you to configure the size of your Windows cell.</p>
 
-<p class='note'><strong>Note:</strong> We have disabled root disk sizing and increased the default disk size for Windows cells. In the near future, we will provide support for ephemeral disk that will allow you to configure the size of your Windows cell.  </p>
+The size of the root disk of a stemcell determines the minimum root disk size of any Windows VM that the BOSH Director can create from that stemcell. The relationship between the disk size of the stemcell and the root disk size of the Windows cells depends on your IaaS, as shown in the table below.
 
 <table id='disk-sizes' border="1" class="nice" >
   <tr>
@@ -46,7 +46,7 @@ The size of the stemcell's root disk determines the minimum root disk size of an
   </tr>
 </table>
 
-Below table is applicable for 1200.16 & previous versions, and 1709.4 and previous versions
+The table bellow applies to Windows Stemcell 1200.16 and previous versions, and to Windows Stemcell 1709.4 and previous versions.
 
 <table id='disk-sizes' border="1" class="nice" >
   <tr>
