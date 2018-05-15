@@ -148,7 +148,7 @@ If a .NET app fails to start, consult the following list of errors and their pos
 
 **Explanation**: Your PCF deployment cannot connect to your Windows cell.
 
-One possible cause for this error is that PCF Runtime for Windows v1.11 and earlier use component ports that newer versions of the Windows 2012R2 stemcell keep closed. Specifically, current Windows stemcells keep port 8031 of the Consul agent VM and ports 1800 and 1801 of the Cell Rep VM closed, but the older Windows stemcells originally used with v1.11 did not.
+One possible cause for this error is that newer versions of the Windows 2012R2 stemcell block inbound traffic by default. Traffic to port 8031 of the Consul agent and ports 1800 and 1801 of the Cell Rep needs to be explicitly allowed in PCF Runtime for Windows v1.11 and earlier.
 
 **Solution**:
 
