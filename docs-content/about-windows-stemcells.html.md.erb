@@ -1,5 +1,5 @@
 ---
-title: About Windows Stemcells
+title: Using Windows Stemcells
 owner: Greenhouse
 ---
 
@@ -11,6 +11,69 @@ A "stemcell" is a customized operating system image containing the filesystem fo
 The BOSH Agent is responsible for executing and monitoring "jobs" on the VM.
 
 Deployments of Windows Server on PCF currently use a stemcell containing Windows Server 2012R2.
+
+## <a id="sizing"></a> Root Disk Sizing
+
+<p class='note'><strong>Note</strong>: Root disk sizing has been disabled and the default disk size for Windows cells has been increased. Future releases will provide ephemeral disk support to allow you to configure the size of your Windows cell.</p>
+
+The size of the root disk of a stemcell determines the minimum root disk size of any Windows VM that the BOSH Director can create from that stemcell. The relationship between the disk size of the stemcell and the root disk size of the Windows cells depends on your IaaS, as shown in the table below.
+
+<table id='disk-sizes' border="1" class="nice" >
+  <tr>
+    <th>IaaS</th>
+    <th>Windows Stemcell 1200.17+ disk size</th>
+  </tr>
+  <tr>
+    <th>Azure</th>
+    <td>127 GB</td>
+  </tr>
+  <tr>
+    <th>AWS</th>
+    <td>128 GB</td>
+  </tr>
+  <tr>
+    <th>GCP</th>
+    <td>100 GB</td>
+  </tr>
+  <tr>
+    <th>vSphere</th>
+    <td>Recommended 128 GB+<sup>*</sup></td>
+  </tr>
+</table>
+
+The table bellow applies to Windows Stemcell 1200.16 and previous versions. 
+
+<table id='disk-sizes' border="1" class="nice" >
+  <tr>
+    <th>IaaS</th>
+    <th>Stemcell root disk size</th>
+    <th>Possible root disk sizes for Windows cells</th>
+  </tr>
+  <tr>
+    <th>Azure</th>
+    <td>127 GB</td>
+    <td>127 GB</td>
+  </tr>
+  <tr>
+    <th>AWS</th>
+    <td>30 GB</td>
+    <td>30 GB or larger (for stemcell 1200.9 and later)</td>
+  </tr>
+  <tr>
+    <th>GCP</th>
+    <td>50 GB</td>
+    <td>50 GB or larger</td>
+  </tr>
+  <tr>
+    <th>vSphere</th>
+    <td>Recommended 128 GB+<sup>*</sup></td>
+    <td>Same as stemcell minimum root disk size</td>
+  </tr>
+</table>
+
+<sup>\*</sup>Because you create your own stemcell on vSphere, you can control its root disk size. See [Creating a vSphere Stemcell Manually](./vsphere-stemcell-build.html) for more information.
+
+In the PAS for Windows 2012R2 tile > **Resource Config** pane, the VM types that you can choose from reflect the disk size constraints in the table above.
 
 ## <a id="light-stemcells"></a> Light Stemcells
 
