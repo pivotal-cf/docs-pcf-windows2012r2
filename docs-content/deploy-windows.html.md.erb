@@ -1,5 +1,5 @@
 ---
-title: Deploying PCF Runtime for Windows 
+title: Deploying PCF Runtime for Windows
 owner: Greenhouse
 ---
 
@@ -22,7 +22,7 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 
 1. Download the product file from the **Pivotal Cloud Foundry Runtime for Windows** section of [Pivotal Network](https://network.pivotal.io/products/runtime-for-windows).
 
-1. Navigate to the Ops Manager Installation Dashboard and click **Import a Product** to upload the product file. 
+1. Navigate to the Ops Manager Installation Dashboard and click **Import a Product** to upload the product file.
 
 1. Click **+** under the uploaded **PCF Windows Runtime** tile to add it to your staging area.
 
@@ -36,7 +36,7 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
 
 1. Assign your AZs and networks and click **Save**.
 
-1. Click **VM Options**. 
+1. Click **VM Options**.
 
     <%= image_tag('vm-options.png') %>
 
@@ -53,23 +53,23 @@ There are two settings in the Elastic Runtime tile that affect the Windows cells
     1. Under **Segment Name**, enter a name for your isolation segment. Ensure that this name is unique across your PCF deployment.
 
     1. Click **Save**.
-    
+
     1. Perform the steps in the [Create an Isolation Segment](../adminguide/isolation-segments.html#create-an-is) section of the <em>Managing Isolation Segments</em> topic to create the isolation segment in the Cloud Controller Database (CCDB).
 
 1. Click **Errands**. Pivotal recommends that you set the **Install HWC Buildpack Errand** to **On**. This ensures that you receive the most up-to-date HWC Buildpack.
-	
+
     <%= image_tag('errands-hwc.png') %>
 
 1. Click **Resource Config** and adjust the number and VM types of your Windows cells as needed.  Ensure that all VMs have disk sizes that match the possible sizes listed in the [Root Disk Sizing](./about-windows-stemcells.html#sizing) table. If you are deploying PAS for Windows 2012R2 on Azure, see the [Configure Resources](./azure-light-stemcell.html#req) section of the *Deploying the Azure Light Stemcell* topic.
 
 1. Click **Save**.
 
-1. Click **Stemcell**. Record the stemcell version number required by the tile. 
+1. Click **Stemcell**. Record the stemcell version number required by the tile.
 
     <%= image_tag('pcf-windows-tile-stemcell.png') %>
 
 1. Retrieve the stemcell by following the steps below for your IaaS.
-    * For vSphere, you must create your own stemcell. See either [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html) or [Creating a vSphere Stemcell by Hand](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand) for more information.
+    * For vSphere, you must create your own stemcell. For more information, see [Creating a vSphere Stemcell Manually](vsphere-stemcell-build.html).
     * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows Server)** section of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
 
 1. Click **Save**.
@@ -100,5 +100,3 @@ If you want to create multiple isolation segments for the Windows tile, perform 
     * `/PATH/TO/COPY`: Provide the absolute path for the copy of the PCF Runtime for Windows tile that the Replicator tool produces.
 
 1. Follow the procedures in this topic using the new `.pivotal` file, starting with [Step 1](#ert).
-
-
