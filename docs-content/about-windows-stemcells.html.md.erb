@@ -46,36 +46,6 @@ The size of the root disk of a stemcell determines the minimum root disk size of
   </tr>
 </table>
 
-The table bellow applies to Windows Stemcell 1200.16 and previous versions, and to Windows Stemcell 1709.4 and previous versions.
-
-<table id='disk-sizes' border="1" class="nice" >
-  <tr>
-    <th>IaaS</th>
-    <th>Stemcell root disk size</th>
-    <th>Possible root disk sizes for Windows cells</th>
-  </tr>
-  <tr>
-    <th>Azure</th>
-    <td>127 GB</td>
-    <td>127 GB</td>
-  </tr>
-  <tr>
-    <th>AWS</th>
-    <td>30 GB</td>
-    <td>30 GB or larger (for stemcell 1200.9 and later)</td>
-  </tr>
-  <tr>
-    <th>GCP</th>
-    <td>50 GB</td>
-    <td>50 GB or larger</td>
-  </tr>
-  <tr>
-    <th>vSphere</th>
-    <td>Recommended 128 GB+<sup>*</sup></td>
-    <td>Same as stemcell minimum root disk size</td>
-  </tr>
-</table>
-
 <sup>\*</sup>Because you create your own stemcell on vSphere, you can control its root disk size. See [Creating a vSphere Stemcell Manually](./vsphere-stemcell-build.html) for more information.
 
 In the PAS for Windows 2012R2 tile > **Resource Config** pane, the VM types that you can choose from reflect the disk size constraints in the table above.
