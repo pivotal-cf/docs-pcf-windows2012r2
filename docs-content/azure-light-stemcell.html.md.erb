@@ -1,0 +1,46 @@
+---
+title: Deploying the Azure Light Stemcell
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic explains how to download and use the Azure light stemcell. For more information about *light stemcells*, see the [Light Stemcells](./about-windows-stemcells.html#light-stemcells) section of the *Using Windows Stemcells* topic.
+
+## <a id="download"></a> Download the Azure Light Stemcell
+
+To download the Azure light stemcell, perform the following steps:
+
+1. Navigate to [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
+2. Select **Azure Light Stemcell for Windows 2012R2 Server** from the **Release Download Files** section of the Stemcells for PCF (Windows) page.
+
+To start using the Azure light stemcell, perform the steps in the [Enable the Azure Light Stemcell](#use) and [Configure Resources](#req) sections.
+
+## <a id="use"></a> Enable the Azure Light Stemcell
+
+To use the Azure light stemcell, you must accept the corresponding license agreement and enable the stemcell for your non-trial Azure subscription through the Azure marketplace as follows:
+
+1. Navigate to [https://portal.azure.com](https://portal.azure.com) and log in.
+1. From the options on the left side of the page, click **+ New**.
+1. In the **Search the marketplace** bar, search for **BOSH Azure Windows Stemcell**.
+1. Select **BOSH Azure Windows Stemcell** from your search results. A description of the BOSH Azure Windows Stemcell appears.
+1. Below the description, at the bottom of the page, click the blue banner that reads **Want to deploy programmatically? Get started ➔**.
+1. Review the Terms of Use.
+1. Under **Choose the subscriptions**, click **Enable** for each Azure subscription with which you want to use the stemcell.
+1. Click **Save**.
+
+## <a id="req"></a>Configure Resources
+
+When you deploy or upgrade the PAS for Windows 2012R2 tile on Azure, configure the resources of BOSH Director and PAS for Windows 2012R2 as follows:
+
+1. On the Ops Manager Installation Dashboard, select **PAS for Windows 2012R2**.
+1. In the **Settings** tab, select **Resource Config**.
+1. In the **VM Type** field, ensure that **Windows Diego Cell** has a disk size of 128&nbsp;GB or larger.
+1. Ensure that **Install HWC Buildpack Errand** has a VM disk size of 128&nbsp;GB or larger.
+	<%= image_tag('tile-resource-config.png') %>
+1. Navigate to the **BOSH Director**.
+1. In the **Settings** tab, select **Resource Config**.
+1. In the **VM Type** field, ensure that the Ops Manager compilation VM has an ephemeral disk of 128&nbsp;GB or larger.
+	<%= image_tag('ops-man-resources.png') %>
+
+For information about how to deploy and configure the PAS for Windows 2012R2 tile, see [Installing and Configuring PAS for Windows 2012R2](./installing-windows.html).
