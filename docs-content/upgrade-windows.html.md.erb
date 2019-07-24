@@ -1,0 +1,48 @@
+---
+title: Upgrading Windows Cells
+owner: Greenhouse
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how to upgrade and rotate the credentials for the PAS for Windows 2012R2 tile, update the Windows stemcell, and upgrade your Windows apps.
+
+
+##<a id='when'></a> When to Upgrade
+
+You must upgrade the PAS for Windows 2012R2 tile at the same time or immediately after you upgrade the PAS tile.
+
+Unless otherwise noted, any minor version of PAS for Windows 2012R2 is compatible with the same minor version of PAS. For example, any 1.12.x version of PAS for Windows 2012R2 works with any 1.12.x version of PAS.
+
+##<a id='upgrade-tile'></a> Upgrade PAS for Windows 2012R2
+
+To upgrade PAS for Windows 2012R2:
+
+1. Follow the instructions [Upgrading PCF Products](../customizing/upgrading-products.html#other-products) with the latest PAS for Windows 2012R2 product download from [Pivotal Network](https://network.pivotal.io/products/p-windows-runtime).
+
+1. If necessary, configure the product. For more information about configuring PAS for Windows 2012R2, see the [Installing and Configuring PAS for Windows 2012R2](./installing-windows.html) topic.
+
+1. Locate the **Pending Changes** section on the right-hand side of the screen and click **Apply Changes**.
+
+## <a id='rotate'></a>Rotate PAS for Windows 2012R2 Credentials
+
+The PAS tile handles all of the credentials for PAS for Windows 2012R2.
+
+To rotate your credentials in PAS for Windows 2012R2, re-deploy PAS and PAS for Windows 2012R2 by navigating to the Ops Manager Installation Dashboard and clicking **Apply Changes**.
+
+##<a id='upgrade-stemcell'></a> Upgrade the Windows Stemcell
+
+1. Retrieve the stemcell by following the steps below for your IaaS:
+    * For vSphere, you must [build your own stemcell](https://github.com/cloudfoundry-incubator/bosh-windows-stemcell-builder/wiki/Creating-a-vSphere-Stemcell-by-Hand).
+    * For AWS, GCP, and Azure, navigate to the **Stemcells for PCF (Windows Server)** section of [Pivotal Network](https://network.pivotal.io/products/stemcells-windows-server).
+
+1. Go to **Stemcell Library**.
+
+1. Click **Import Stemcell** to import the stemcell file.
+
+1. When prompted, enable the Ops Manager product checkbox to stage your stemcell.
+
+1. Click **Apply Stemcell to Products**.
+
+For more information about Windows stemcells, see [Using Windows Stemcells](./about-windows-stemcells.html).
+
